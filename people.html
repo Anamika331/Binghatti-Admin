@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-grad-a: #e9e9ee;
+            --bg-grad-b: #fff6cf;
+            --ink: #1f2937;
+            --ink-2: #374151;
+            --muted: #6b7280;
+            --chip-green-bg: #ecfdf5;
+            --chip-green-fg: #047857;
+            --chip-gray-bg: #f3f4f6;
+            --chip-gray-fg: #6b7280;
+            --shadow-1: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
+            --shadow-2: 0 2px 8px rgba(0, 0, 0, .08);
+            --radius-xl: 1.5rem;
+            --lux-bg: #ffffff;
+            --lux-gold: #D4AF37;
+            --lux-gold-2: #b78f2a;
+            --lux-black: #000000;
+            --lux-muted: rgba(0, 0, 0, 0.65);
+            --lux-radius: 14px;
+            --lux-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            background: linear-gradient(90deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 100%);
+            width: 100%;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0 0rem;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        .subtitle-text {
+            font-weight: 100;
+            font-size: .9rem;
+            color: black;
+            margin: .25rem 0 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            font-family: 'Poppins';
+            background: #fcd34d;
+            color: var(--ink);
+            font-weight: 400;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            background: #facc15;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+        }
+
+        .table-container {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            width: 100%;
+            margin: 20px auto 10px;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 20px 20px 20px;
+        }
+
+        .table-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-input {
+            padding: .7rem 1rem .7rem 2.4rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            background: #fff;
+            box-shadow: var(--shadow-2);
+            font-size: .9rem;
+            color: black;
+            font-weight: 100;
+            font-family: 'Poppins', sans-serif;
+            width: min(340px, 58vw);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .filter-select,
+        .filter-btn {
+            padding: .7rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            background: #fff;
+            box-shadow: var(--shadow-2);
+            font-size: .9rem;
+            color: black;
+            font-weight: 100;
+            font-family: 'Poppins', sans-serif;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            text-align: left;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: .75rem;
+        }
+
+        td {
+            padding: 1rem .75rem;
+            font-size: .9rem;
+            color: var(--ink-2);
+            vertical-align: middle;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .checkbox-cell {
+            width: 40px;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: border-color .15s ease, background .15s ease;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked {
+            background-color: #111;
+            border-color: #111;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 4px;
+            height: 9px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            object-fit: cover;
+        }
+
+        .pill {
+            padding: .35rem .75rem;
+            border-radius: 9999px;
+            font-size: .75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .pill.green {
+            background: var(--chip-green-bg);
+            color: var(--chip-green-fg);
+        }
+
+        .pill.gray {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .view-btn {
+            background: var(--ink);
+            color: #fff;
+            padding: .4rem 1rem;
+            font-size: 12px;
+            font-weight: 100;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-family: 'Poppins';
+        }
+
+        /* Modals */
+        .modal {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, .4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: min(900px, 92vw);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+            position: relative;
+            animation: zoomBounce .4s ease;
+        }
+
+        @keyframes zoomBounce {
+            0% {
+                transform: scale(.8);
+                opacity: 0
+            }
+
+            60% {
+                transform: scale(1.05);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .modal-content .close-btn {
+            all: unset;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #addEmployeeModal .modal-content,
+        #viewEmployeeModal .modal-content {
+            width: 1080px;
+            max-width: calc(100% - 48px);
+            border-radius: var(--lux-radius);
+            padding: 22px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: var(--lux-shadow);
+            display: grid;
+            grid-template-columns: 6fr 4fr;
+            gap: 22px;
+            align-items: center;
+        }
+
+        .acm-title h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 100;
+            color: var(--lux-black);
+        }
+
+        .acm-title p {
+            margin: 6px 0 18px 0;
+            color: var(--lux-muted);
+            font-size: 13px;
+        }
+
+        .add-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        #addEmployeeModal label {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: var(--lux-muted);
+            font-weight: 100;
+        }
+
+        .input,
+        .select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: var(--lux-black);
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .actions {
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            align-items: center;
+            grid-column: 1 / -1;
+        }
+
+        .btn-cancel {
+            font-family: "Poppins";
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: var(--lux-muted);
+            cursor: pointer;
+        }
+
+        .btn-save {
+            font-family: "Poppins";
+            background: linear-gradient(90deg, var(--lux-gold), var(--lux-gold-2));
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 100;
+            cursor: pointer;
+            box-shadow: 0 8px 26px rgba(212, 175, 55, 0.14);
+        }
+
+        .acm-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9fafb;
+            border-radius: var(--lux-radius);
+            padding: 24px;
+            height: 100%;
+        }
+
+        .id-card {
+            width: 100%;
+            max-width: 320px;
+            padding: 24px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            color: var(--ink);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        .id-card[data-department="Front Office"] {
+            background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%);
+        }
+
+        .id-card[data-department="Housekeeping"] {
+            background: linear-gradient(135deg, #dcfce7 0%, #a7f3d0 100%);
+        }
+
+        .id-card[data-department="Food & Beverage"] {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        }
+
+        .id-card[data-department="Kitchen"] {
+            background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+        }
+
+        .id-card[data-department="Sales & Marketing"] {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+        }
+
+        .id-card[data-department="Human Resources"] {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+
+        .id-card[data-department="Maintenance"] {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+        }
+
+        .id-card-header {
+            margin-bottom: 1rem;
+        }
+
+        .id-card-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 300;
+            opacity: 0.7;
+        }
+
+        .id-card-body .photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .id-card-body .name {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0 0 4px;
+        }
+
+        .id-card-body .department {
+            font-size: 0.9rem;
+            font-weight: 300;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .id-card-footer {
+            margin-top: 1.5rem;
+        }
+
+        .qr-code {
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .qr-code img {
+            display: block;
+        }
+
+        .id-number {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+
+        #viewEmployeeModal .modal-content {
+            grid-template-columns: 6fr 4fr;
+        }
+
+        .vc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .vc-header h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+
+        .vc-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .vc-item .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .vc-item .value {
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+
+        <header class="header">
+            <div class="logo-container">
+                <img src="pixellent.png" class="logo-image">
+                <div class="logo-text"></div>
+            </div>
+
+
+            <nav class="main-nav">
+                <a href="admin_dashboard.html">Dashboard</a>
+                <a href="people.html" class="active">People</a>
+                <a href="agent-company.html">Companies</a>
+                <!-- <a href="agent-company.html">Agent</a>
+                <a href="contractor-company.html">Contractor</a> -->
+                <a href="customers.html">Customers</a>
+                <a href="pantry.html">Pantry</a>
+                <a href="salary_admin.html">Salary</a>
+                <a href="admin-attendance.html">Attendance</a>
+                <!-- <a href="leave.html">Leave</a> -->
+                <a href="parking.html">Parking</a>
+                <a href="delivery.html">Delivery</a>
+
+                <a href="meeting-room.html">Facilities</a>
+                <a href="visitior-list.html">Visitor</a>
+                <a href="anoucement.html">Insights</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="AI-assistant.html" class="setting-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20"
+                        height="20">
+                        <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM12 20a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"></path>
+                    </svg>
+                    <span>AI</span>
+                </a>
+                <!-- <button class="icon-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22ZM19 17v-6a7 7 0 0 0-7-7 7 7 0 0 0-7 7v6l-2 2v1h18v-1l-2-2Z">
+                        </path>
+                    </svg>
+                </button> -->
+                <div class="user-profile-btn"></div>
+            </div>
+        </header>
+
+
+        <div class="dashboard-header">
+            <h1>Employees</h1>
+            <div class="header-actions">
+                <button class="action-btn" id="openAddEmployee">Add Employee</button>
+            </div>
+        </div>
+        <div style="padding: 0 1rem 1.25rem;">
+            <p class="subtitle-text">Manage and track all your employees in one place.</p>
+        </div>
+
+        <div class="table-container">
+            <div class="table-controls">
+                <div class="search-wrap">
+                    <input id="searchInput" class="search-input" type="text" placeholder="Search employees" />
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M10 4a6 6 0 104.472 10.03l4.249 4.249 1.414-1.414-4.249-4.249A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" />
+                    </svg>
+                </div>
+                <select id="statusFilter" class="filter-select">
+                    <option value="All">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <button class="filter-btn" id="exportButton">Export</button>
+            </div>
+
+            <table id="employeesTable">
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell"></th>
+                        <th>Employee</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Department</th>
+                        <th>Joining Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesBody"></tbody>
+            </table>
+        </div>
+
+        <div id="addEmployeeModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="close-btn" data-close>&times;</button>
+                <div class="acm-left">
+                    <div class="acm-title">
+                        <div>
+                            <h2>Add Employee</h2>
+                            <p>Fill the details to add an employee record.</p>
+                        </div>
+                    </div>
+                    <form id="addEmployeeForm">
+                        <div class="add-form-grid">
+                            <div>
+                                <label for="aem_name">Full name</label>
+                                <input id="aem_name" name="name" type="text" class="input" required />
+                            </div>
+                            <div>
+                                <label for="aem_email">Email</label>
+                                <input id="aem_email" name="email" type="email" class="input" required />
+                            </div>
+                            <div>
+                                <label for="aem_phone">Phone Number</label>
+                                <input id="aem_phone" name="phone" type="text" class="input" />
+                            </div>
+                            <div>
+                                <label for="aem_joiningDate">Joining Date</label>
+                                <input id="aem_joiningDate" name="joiningDate" type="date" class="input" />
+                            </div>
+                            <div>
+                                <label for="aem_gender">Gender</label>
+                                <select id="aem_gender" name="gender" class="select">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="aem_department">Department</label>
+                                <select id="aem_department" name="department" class="select">
+                                    <option value="Front Office">Front Office</option>
+                                    <option value="Housekeeping">Housekeeping</option>
+                                    <option value="Food & Beverage">Food & Beverage</option>
+                                    <option value="Kitchen">Kitchen</option>
+                                    <option value="Sales & Marketing">Sales & Marketing</option>
+                                    <option value="Human Resources">Human Resources</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                </select>
+                            </div>
+                            <div class="full">
+                                <label for="aem_image">Avatar Image</label>
+                                <input id="aem_image" name="image" type="file" class="input" accept="image/*" />
+                            </div>
+                            <div class="actions">
+                                <button type="button" class="btn-cancel" data-close>Cancel</button>
+                                <button type="submit" class="btn-save">Add Employee</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="acm-right">
+                    <div class="id-card" id="id-card">
+                        <div class="id-card-header">
+                            <h3>EMPLOYEE ID CARD</h3>
+                        </div>
+                        <div class="id-card-body">
+                            <img id="idCardPhoto" class="photo" src="" alt="Employee Photo" />
+                            <h4 id="idCardName" class="name">Employee Name</h4>
+                            <p id="idCardDepartment" class="department">Department</p>
+                        </div>
+                        <div class="id-card-footer">
+                            <div class="qr-code" id="idCardQrCode"></div>
+                            <p class="id-number" id="idCardNumber">ID: #EMP-00000</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewEmployeeModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="close-btn" data-close>&times;</button>
+                <div class="acm-left">
+                    <div class="vc-header">
+                        <h2 id="vemName">Employee Details</h2>
+                        <span id="vemStatusBadge" class="pill green">Active</span>
+                    </div>
+                    <div class="vc-details">
+                        <div class="vc-item">
+                            <p class="label">Email</p><a class="value" id="vemEmail"></a>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Phone</p><a class="value" id="vemPhone"></a>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Gender</p>
+                            <p class="value" id="vemGender"></p>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Department</p>
+                            <p class="value" id="vemDepartment"></p>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Joining Date</p>
+                            <p class="value" id="vemJoiningDate"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="acm-right">
+                    <div class="id-card" id="view-id-card">
+                        <div class="id-card-header">
+                            <h3>EMPLOYEE ID CARD</h3>
+                        </div>
+                        <div class="id-card-body">
+                            <img id="viewIdCardPhoto" class="photo" src="" alt="Employee Photo" />
+                            <h4 id="viewIdCardName" class="name">Employee Name</h4>
+                            <p id="viewIdCardDepartment" class="department">Department</p>
+                        </div>
+                        <div class="id-card-footer">
+                            <div class="qr-code" id="viewIdCardQrCode"></div>
+                            <p class="id-number" id="viewIdCardNumber">ID: #EMP-00000</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const employees = [
+            { id: "EMP-1001", name: "John Doe", email: "john.doe@example.com", phone: "+971 50 123 4567", gender: "Male", department: "Front Office", joiningDate: "2022-01-15", status: "Active", image: "https://randomuser.me/api/portraits/men/1.jpg", address: "Dubai Marina, Dubai, UAE" },
+            { id: "EMP-1002", name: "Jane Smith", email: "jane.smith@example.com", phone: "+971 52 987 6543", gender: "Female", department: "Housekeeping", joiningDate: "2023-05-20", status: "Active", image: "https://randomuser.me/api/portraits/women/2.jpg", address: "Al Nahda, Sharjah, UAE" },
+            { id: "EMP-1003", name: "Peter Jones", email: "peter.jones@example.com", phone: "+971 58 222 8899", gender: "Male", department: "Food & Beverage", joiningDate: "2021-11-01", status: "Inactive", image: "https://randomuser.me/api/portraits/men/3.jpg", address: "JLT, Dubai, UAE" },
+            { id: "EMP-1004", name: "Emily White", email: "emily.white@example.com", phone: "+971 55 443 1100", gender: "Female", department: "Sales & Marketing", joiningDate: "2024-03-10", status: "Active", image: "https://randomuser.me/api/portraits/women/4.jpg", address: "Khalifa City, Abu Dhabi, UAE" },
+            { id: "EMP-1005", name: "David Chen", email: "david.chen@example.com", phone: "+971 56 111 2233", gender: "Male", department: "Kitchen", joiningDate: "2022-08-25", status: "Active", image: "https://randomuser.me/api/portraits/men/5.jpg", address: "Downtown Dubai, Dubai, UAE" },
+            { id: "EMP-1006", name: "Sarah Lee", email: "sarah.lee@example.com", phone: "+971 50 333 4455", gender: "Female", department: "Human Resources", joiningDate: "2023-01-10", status: "Active", image: "https://randomuser.me/api/portraits/women/6.jpg", address: "Business Bay, Dubai, UAE" },
+            { id: "EMP-1007", name: "Mike Davis", email: "mike.davis@example.com", phone: "+971 54 555 6677", gender: "Male", department: "Maintenance", joiningDate: "2021-04-05", status: "Inactive", image: "https://randomuser.me/api/portraits/men/7.jpg", address: "Jumeirah, Dubai, UAE" },
+            { id: "EMP-1008", name: "Laura Garcia", email: "laura.garcia@example.com", phone: "+971 51 777 8899", gender: "Female", department: "Food & Beverage", joiningDate: "2024-02-18", status: "Active", image: "https://randomuser.me/api/portraits/women/8.jpg", address: "Al Barsha, Dubai, UAE" }
+        ];
+
+        const $ = (sel, root = document) => root.querySelector(sel);
+        const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+        const tbody = $('#employeesBody');
+        const addModal = $('#addEmployeeModal');
+        const viewModal = $('#viewEmployeeModal');
+        const statusFilter = $('#statusFilter');
+        const searchInput = $('#searchInput');
+        const exportButton = $('#exportButton');
+
+        const idCard = $('#id-card');
+        const idCardPhoto = $('#idCardPhoto');
+        const idCardName = $('#idCardName');
+        const idCardDepartment = $('#idCardDepartment');
+        const idCardNumber = $('#idCardNumber');
+        const idCardQrCode = $('#idCardQrCode');
+
+        const aemForm = $('#addEmployeeForm');
+        const aemNameInput = $('#aem_name');
+        const aemDepartmentSelect = $('#aem_department');
+        const aemGenderSelect = $('#aem_gender');
+        const aemImageInput = $('#aem_image');
+
+        const defaultMalePhoto = 'https://randomuser.me/api/portraits/men/50.jpg';
+        const defaultFemalePhoto = 'https://randomuser.me/api/portraits/women/50.jpg';
+        const defaultOtherPhoto = 'https://i.ibb.co/v4b6Y5V/hotel-employee.jpg';
+
+        function generateEmployeeId() {
+            const num = Math.floor(Math.random() * 9000) + 1000;
+            return `EMP-${num}`;
+        }
+
+        function getGenderPhoto(gender) {
+            return gender === 'Male' ? defaultMalePhoto : gender === 'Female' ? defaultFemalePhoto : defaultOtherPhoto;
+        }
+
+        function renderRows(filteredEmployees) {
+            tbody.innerHTML = filteredEmployees.map((e) => `
+                <tr data-id="${e.id}">
+                    <td class="checkbox-cell"><input type="checkbox" /></td>
+                    <td class="profile"><img src="${e.image || getGenderPhoto(e.gender)}" alt="${e.name}"/> ${e.name}</td>
+                    <td>${e.email}</td>
+                    <td>${e.phone || 'N/A'}</td>
+                    <td>${e.department || 'N/A'}</td>
+                    <td>${formatDateISOToMed(e.joiningDate) || 'N/A'}</td>
+                    <td>${e.status === 'Active' ? '<span class="pill green">Active</span>' : '<span class="pill gray">Inactive</span>'}</td>
+                    <td><button class="view-btn" data-view>View</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function filterAndRenderRows() {
+            const status = statusFilter.value;
+            const searchTerm = searchInput.value.toLowerCase();
+            let filtered = employees;
+
+            if (status !== 'All') {
+                filtered = filtered.filter(e => e.status === status);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(e =>
+                    e.name.toLowerCase().includes(searchTerm) ||
+                    e.email.toLowerCase().includes(searchTerm) ||
+                    (e.department && e.department.toLowerCase().includes(searchTerm))
+                );
+            }
+            renderRows(filtered);
+        }
+
+        function formatDateISOToMed(iso) {
+            if (!iso) return null;
+            const d = new Date(iso);
+            return d.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' });
+        }
+
+        function closeModals() {
+            $$('.modal').forEach(m => m.classList.add('hidden'));
+        }
+
+        function updateIdCardPreview() {
+            const name = aemNameInput.value.trim() || 'Employee Name';
+            const department = aemDepartmentSelect.value || 'Department';
+            const gender = aemGenderSelect.value;
+
+            idCard.dataset.department = department;
+            idCardName.textContent = name;
+            idCardDepartment.textContent = department;
+
+            if (!aemImageInput.files[0]) {
+                idCardPhoto.src = getGenderPhoto(gender);
+            }
+
+            // QR Code
+            idCardQrCode.innerHTML = '';
+            const qrData = `Name: ${name}\nDept: ${department}`;
+            const qr = qrcode(0, 'M');
+            qr.addData(qrData);
+            qr.make();
+            idCardQrCode.innerHTML = qr.createImgTag(4, 4);
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', filterAndRenderRows);
+        document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModals());
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-close]') || (e.target.classList.contains('modal') && !e.target.closest('.modal-content'))) {
+                closeModals();
+            }
+        });
+
+        $('#openAddEmployee').addEventListener('click', () => {
+            aemForm.reset();
+            idCardNumber.textContent = `ID: #${generateEmployeeId()}`;
+            updateIdCardPreview();
+            addModal.classList.remove('hidden');
+        });
+
+        aemForm.addEventListener('input', updateIdCardPreview);
+
+        aemImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                idCardPhoto.src = URL.createObjectURL(file);
+            } else {
+                idCardPhoto.src = getGenderPhoto(aemGenderSelect.value);
+            }
+        });
+
+        aemForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const imageFile = fd.get('image');
+
+            employees.unshift({
+                id: idCardNumber.textContent.split('#')[1],
+                name: fd.get('name').trim(),
+                email: fd.get('email').trim(),
+                phone: fd.get('phone').trim() || null,
+                joiningDate: fd.get('joiningDate') || null,
+                gender: fd.get('gender'),
+                department: fd.get('department'),
+                status: 'Active',
+                image: imageFile && imageFile.size > 0 ? URL.createObjectURL(imageFile) : getGenderPhoto(fd.get('gender'))
+            });
+            filterAndRenderRows();
+            closeModals();
+        });
+
+        tbody.addEventListener('click', (e) => {
+            if (e.target.matches('[data-view]')) {
+                const tr = e.target.closest('tr');
+                const employee = employees.find(emp => emp.id === tr.dataset.id);
+                if (!employee) return;
+
+                $('#vemName').textContent = employee.name;
+                $('#vemEmail').textContent = employee.email;
+                $('#vemEmail').href = `mailto:${employee.email}`;
+                $('#vemPhone').textContent = employee.phone || 'N/A';
+                $('#vemPhone').href = employee.phone ? `tel:${employee.phone}` : '#';
+                $('#vemGender').textContent = employee.gender;
+                $('#vemDepartment').textContent = employee.department;
+                $('#vemJoiningDate').textContent = formatDateISOToMed(employee.joiningDate);
+
+                const statusBadge = $('#vemStatusBadge');
+                statusBadge.textContent = employee.status;
+                statusBadge.className = 'pill ' + (employee.status === 'Active' ? 'green' : 'gray');
+
+                // Update view modal's ID card
+                const viewIdCard = $('#view-id-card');
+                viewIdCard.dataset.department = employee.department;
+                $('#viewIdCardPhoto').src = employee.image || getGenderPhoto(employee.gender);
+                $('#viewIdCardName').textContent = employee.name;
+                $('#viewIdCardDepartment').textContent = employee.department;
+                $('#viewIdCardNumber').textContent = `ID: #${employee.id}`;
+
+                const viewQrCode = $('#viewIdCardQrCode');
+                viewQrCode.innerHTML = '';
+                const qrData = `ID: ${employee.id}\nName: ${employee.name}\nDept: ${employee.department}`;
+                const qr = qrcode(0, 'M');
+                qr.addData(qrData);
+                qr.make();
+                viewQrCode.innerHTML = qr.createImgTag(4, 4);
+
+                viewModal.classList.remove('hidden');
+            }
+        });
+
+        statusFilter.addEventListener('change', filterAndRenderRows);
+        searchInput.addEventListener('input', filterAndRenderRows);
+        exportButton.addEventListener('click', () => alert('Export functionality to be added.'));
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contractor Companies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ========== Exact CSS from customers.html (kept intact) ========== */
+        :root {
+            --bg-grad-a: #e9e9ee;
+            --selected: #fde68a;
+            --bg-grad-b: #fff6cf;
+            --ink: #1f2937;
+            --ink-2: #374151;
+            --muted: #6b7280;
+            --chip-green-bg: #ecfdf5;
+            --chip-green-fg: #047857;
+            --chip-gray-bg: #f3f4f6;
+            --chip-gray-fg: #6b7280;
+            --chip-gold-bg: #fef9c3;
+            --chip-gold-fg: #a16207;
+            --shadow-1: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
+            --shadow-2: 0 2px 8px rgba(0, 0, 0, .08);
+            --pill-pad: .75rem 2rem;
+            --radius-xl: 1.5rem;
+
+            /* White/Gold modal theme */
+            --lux-bg: #ffffff;
+            --lux-panel: rgba(0, 0, 0, 0.03);
+            --lux-glass: rgba(0, 0, 0, 0.04);
+            --lux-gold: #D4AF37;
+            --lux-gold-2: #b78f2a;
+            --lux-black: #000000;
+            --lux-muted: rgba(0, 0, 0, 0.65);
+            --lux-radius: 14px;
+            --lux-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            background: linear-gradient(90deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 100%);
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0 0rem;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        /* Top row actions  */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            max-width: 100%;
+            margin: 0 1rem 1.25rem;
+        }
+
+        .dflex-secend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .progress-item {
+            text-align: center;
+        }
+
+        .progress-item p {
+            font-size: .875rem;
+            color: var(--muted);
+            margin: .25rem 0;
+        }
+
+        .progress-bar {
+            font-weight: 500;
+            padding: var(--pill-pad);
+            border-radius: 9999px;
+            box-shadow: var(--shadow-2);
+            white-space: nowrap;
+        }
+
+        .progress-interviews {
+            background: #1f2937;
+            color: #fff;
+        }
+
+        .progress-hired {
+            background: #fcd34d;
+            color: var(--ink);
+        }
+
+        .progress-project-time {
+            background: #e5e7eb;
+            color: var(--ink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-project-time::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .12) 10px, transparent 10px, transparent 20px);
+            opacity: .75;
+        }
+
+        .progress-output {
+            border: 1px solid #d1d5db;
+            color: var(--ink);
+            background: #fff;
+        }
+
+        .add-entity-btn {
+            font-family: 'Lexend';
+            background: #fcd34d;
+            color: var(--ink);
+            font-weight: 400;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+            white-space: nowrap;
+        }
+
+        .add-entity-btn:hover {
+            background: #facc15;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+        }
+
+        /* Table card */
+        .table-container {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            width: 98%;
+            margin: 20px auto 10px;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 20px 20px 20px;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            padding: 2rem;
+            padding-top: 90px;
+        }
+
+        @media (max-width:720px) {
+            .table-scroll {
+                padding: 1rem;
+                padding-top: 90px;
+            }
+        }
+
+        .table-top-btn-boxes {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .btn-tble1 {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: none;
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+        }
+
+        .btn-tble2 {
+            min-width: 110px;
+            height: 40px;
+            padding: 0 14px;
+            background: #fff;
+            border-radius: 30px;
+            border: none;
+            box-shadow: var(--shadow-2);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead {
+            background: #f9fafb;
+            position: sticky;
+            top: 0;
+            z-index: 0;
+        }
+
+        th {
+            text-align: left;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: .75rem;
+        }
+
+        td {
+            padding: 1rem .75rem;
+            font-size: .9rem;
+            color: var(--ink-2);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: border-color .15s ease, background .15s ease;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked {
+            background-color: #111;
+            border-color: #111;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 4px;
+            height: 9px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* SELECTED ROW */
+        tbody tr.selected td {
+            background-color: var(--selected);
+        }
+
+        tbody tr.selected td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr.selected td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        tbody tr.selected::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 2px;
+            bottom: 2px;
+            border-radius: 14px;
+            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+        }
+
+        tbody tr[aria-selected="true"] {
+            outline: 2px solid transparent;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            object-fit: cover;
+        }
+
+        .pill {
+            padding: .35rem .75rem;
+            border-radius: 9999px;
+            font-size: .75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .pill.green {
+            background: var(--chip-green-bg);
+            color: var(--chip-green-fg);
+        }
+
+        .pill.gray {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .pill.vip {
+            background: var(--chip-gold-bg);
+            color: var(--chip-gold-fg);
+        }
+
+        .view-btn {
+            background: var(--ink);
+            color: #fff;
+            padding: .4rem 1rem;
+            font-size: 12px;
+            font-weight: 100;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: transform .2s ease, background .2s ease;
+            box-shadow: var(--shadow-2);
+            position: relative;
+            font-family: 'Lexend';
+        }
+
+        .view-btn:hover {
+            background: #374151;
+            transform: translateY(-1px);
+        }
+
+        .view-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, .28), transparent);
+            opacity: 0;
+            border-radius: 9999px;
+            transition: opacity .3s ease;
+        }
+
+        .view-btn:hover::before {
+            opacity: 1;
+        }
+
+        /* Base modal (used by View) */
+        .modal {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, .4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: min(900px, 92vw);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+            position: relative;
+            animation: zoomBounce .4s ease;
+        }
+
+        @keyframes zoomBounce {
+            0% {
+                transform: scale(.8);
+                opacity: 0
+            }
+
+            60% {
+                transform: scale(1.05);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 1.6rem;
+            color: #6b7280;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #111827;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f3f4f6;
+        }
+
+        .modal-header-text h2 {
+            font-size: 1.6rem;
+            margin: 0;
+            color: var(--ink);
+        }
+
+        .modal-header-text p {
+            margin: .15rem 0 0;
+            color: var(--muted);
+        }
+
+        .modal-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .75rem 1.25rem;
+            margin-top: .75rem;
+        }
+
+        .modal-detail {
+            border: 1px solid #e5e7eb;
+            border-radius: .75rem;
+            padding: .75rem 1rem;
+        }
+
+        .modal-detail .label {
+            font-size: .75rem;
+            color: var(--muted);
+            margin: 0 0 .15rem;
+            font-weight: 600;
+        }
+
+        .modal-detail .value {
+            font-size: .95rem;
+            color: var(--ink-2);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: .6rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .btn-dark {
+            font-family: 'Lexend';
+            background: var(--ink);
+            color: #fff;
+            border: none;
+            border-radius: 9999px;
+            padding: .55rem 1.2rem;
+            font-weight: 100;
+            cursor: pointer;
+        }
+
+        .btn-gold {
+            font-family: 'Lexend';
+            background: #fcd34d;
+            color: var(--ink);
+            border: none;
+            border-radius: 9999px;
+            padding: .55rem 1.2rem;
+            font-weight: 100;
+            cursor: pointer;
+        }
+
+        /* Row entrance */
+        tbody tr {
+            animation: fadeSlideIn .45s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        tbody tr:nth-child(even) {
+            animation-delay: .05s;
+        }
+
+        tbody tr:nth-child(odd) {
+            animation-delay: .1s;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive niceties */
+        @media (max-width:720px) {
+            .progress-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .add-entity-btn {
+                width: 100%;
+            }
+
+            .modal-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                min-width: 900px;
+            }
+        }
+
+        /* Search + Sort (table header controls) */
+        .table-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-input {
+            padding: .7rem 1rem .7rem 2.4rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            background: #fff;
+            box-shadow: var(--shadow-2);
+            font-size: .9rem;
+            color: black;
+            font-weight: 100;
+            font-family: 'Lexend', sans-serif;
+            width: min(340px, 58vw);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .btn-sort {
+            min-width: 130px;
+            height: 40px;
+            padding: 0 14px;
+            background: #fff;
+            border-radius: 30px;
+            border: none;
+            box-shadow: var(--shadow-2);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sort.is-active {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        @media (max-width:720px) {
+            .search-input {
+                width: 56vw;
+            }
+        }
+
+        /* Pill-style filter buttons */
+        .filter-pill {
+            background: #fff;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.7rem 1.4rem;
+            font-size: 0.9rem;
+            font-family: 'Lexend';
+            font-weight: 100;
+            color: var(--ink-2);
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .filter-pill:hover {
+            background: #f9fafb;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .filter-pill svg {
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        /* Selected row highlight */
+        tr.selected {
+            background-color: #fde68a;
+        }
+
+        tbody tr.selected td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr.selected td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* ========= NEW: Add Customer Modal (white/gold luxury style) ========= */
+        #addCustomerModal {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 28px;
+        }
+
+        #addCustomerModal .modal-content {
+            width: 760px;
+            max-width: calc(100% - 48px);
+            background: var(--lux-bg);
+            border-radius: var(--lux-radius);
+            padding: 22px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: var(--lux-shadow);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            align-items: start;
+            transform: translateY(12px);
+            animation: pop 260ms ease;
+            overflow: hidden;
+        }
+
+        @keyframes pop {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(.995)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        /* Title */
+        #addCustomerModal .acm-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 4px 0 4px 0;
+        }
+
+        #addCustomerModal .acm-title h2 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: .2px;
+            font-weight: 100;
+            color: var(--lux-black);
+        }
+
+        #addCustomerModal .acm-title p {
+            margin: 6px 0 0 0;
+            color: var(--lux-muted);
+            font-size: 13px;
+        }
+
+        /* Close button (square) */
+        #addCustomerModal .close-btn {
+            all: unset;
+            position: absolute;
+            right: 22px;
+            top: 18px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+        }
+
+        #addCustomerModal .close-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Form grid */
+        #addCustomerModal .add-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        #addCustomerModal label {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: var(--lux-muted);
+            font-weight: 100;
+        }
+
+        #addCustomerModal .input,
+        #addCustomerModal .select,
+        #addCustomerModal .textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: var(--lux-black);
+            outline: none;
+            font-size: 18px;
+            font-weight: 100;
+            transition: box-shadow .12s ease, border-color .12s ease;
+            font-family: 'Lexend', sans-serif;
+        }
+
+        #addCustomerModal .textarea {
+            min-height: 84px;
+            resize: vertical;
+            grid-column: 1 / -1;
+        }
+
+        #addCustomerModal .input:focus,
+        #addCustomerModal .select:focus,
+        #addCustomerModal .textarea:focus {
+            box-shadow: 0 6px 18px rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.32);
+        }
+
+        #addCustomerModal .full {
+            grid-column: 1 / -1;
+        }
+
+        /* Actions */
+        #addCustomerModal .actions {
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #addCustomerModal .btn-cancel {
+            font-family: "Lexend";
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: var(--lux-muted);
+            cursor: pointer;
+        }
+
+        #addCustomerModal .btn-save {
+            font-family: "Lexend";
+            background: linear-gradient(90deg, var(--lux-gold), var(--lux-gold-2));
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 100;
+            cursor: pointer;
+            box-shadow: 0 8px 26px rgba(212, 175, 55, 0.14);
+        }
+
+        @media (max-width: 900px) {
+            #addCustomerModal .modal-content {
+                padding: 16px;
+            }
+
+            #addCustomerModal .add-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .subtitle-text {
+            font-weight: 100;
+            font-size: .9rem;
+            color: black;
+            margin: .25rem 0 0;
+        }
+
+        /* === View Profile Modal (centered card) === */
+        .view-card {
+            width: min(720px, 92vw);
+            padding: 28px 24px 22px;
+            border-radius: 18px;
+            border: 1px solid rgba(0, 0, 0, .06);
+            box-shadow: 0 14px 38px rgba(0, 0, 0, .12);
+        }
+
+        .vc-header {
+            display: grid;
+            justify-items: center;
+            text-align: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .vc-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 9999px;
+            object-fit: cover;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .15);
+        }
+
+        .vc-name {
+            margin: 8px 0 2px;
+            font-size: 1.8rem;
+            font-weight: 100;
+            color: var(--ink);
+        }
+
+        .vc-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: .4rem .7rem;
+            border-radius: 9999px;
+            font-size: .85rem;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: #374151;
+            box-shadow: var(--shadow-2);
+        }
+
+        .badge.vip {
+            background: var(--chip-gold-bg);
+            color: var(--chip-gold-fg);
+        }
+
+        .badge.normal {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .badge.status-active {
+            background: var(--chip-green-bg);
+            color: var(--chip-green-fg);
+        }
+
+        .badge.status-inactive {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .vc-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .vc-links a {
+            text-decoration: none;
+            padding: .5rem .9rem;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: var(--ink-2);
+            font-weight: 100;
+            box-shadow: var(--shadow-2);
+        }
+
+        .vc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .75rem 1rem;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .vc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .vc-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: .8rem 1rem;
+            background: #fff;
+        }
+
+        .vc-item .label {
+            font-size: .75rem;
+            color: var(--muted);
+            font-weight: 100;
+            margin: 0 0 .2rem;
+        }
+
+        .vc-item .value {
+            font-size: .95rem;
+            color: var(--ink-2);
+            margin: 0;
+            font-weight: 100;
+        }
+
+        /* close button (square, top-right) */
+        .view-card .close-btn {
+            right: 14px;
+            top: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, .06);
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+            color: var(--ink-2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Contractor Companies</h1>
+        </div>
+
+        <div class="progress-container" style="display:none">
+            <div class="dflex-secend">
+                <div class="progress-item">
+                    <p>Total</p>
+                    <div class="progress-bar progress-interviews" id="stat-total">—</div>
+                </div>
+                <div class="progress-item">
+                    <p>Active</p>
+                    <div class="progress-bar progress-hired" id="stat-active">—</div>
+                </div>
+                <div class="progress-item">
+                    <p>Parent</p>
+                    <div class="progress-bar progress-project-time" id="stat-vip">—</div>
+                </div>
+                <div class="progress-item">
+                    <p>Recent</p>
+                    <div class="progress-bar progress-output" id="stat-recent">—</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin: 0 1rem 1.25rem;">
+            <div>
+                <p class="subtitle-text">Manage and track contractor companies — profiles, contacts, and status all in one place.</p>
+            </div>
+            <button class="add-entity-btn" id="openAdd">Add Company</button>
+        </div>
+
+        <div class="table-container">
+            <div class="table-controls">
+                <div class="search-wrap">
+                    <input id="searchInput" class="search-input" type="text" placeholder="Search companies" />
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M10 4a6 6 0 104.472 10.03l4.249 4.249 1.414-1.414-4.249-4.249A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" />
+                    </svg>
+                </div>
+                <button id="filterStatus" class="filter-pill">Filter: All
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <button class="filter-pill" id="exportBtn">Export Companies</button>
+            </div>
+
+            <div class="table-top-btn-boxes">
+                <button class="btn-tble1" id="btnAddInline" title="Add">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
+                        fill="currentColor">
+                        <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+                    </svg>
+                </button>
+            </div>
+
+            <table id="customersTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Company</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Website</th>
+                        <th>Parent</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="customersBody"></tbody>
+            </table>
+        </div>
+
+        <!-- View Modal (kept exactly like customers.html) -->
+        <div id="viewModal" class="modal hidden">
+            <div class="modal-content view-card">
+                <span class="close-btn" data-close>&times;</span>
+
+                <div class="vc-header">
+                    <img id="vmPhoto" class="vc-avatar" src="" alt="Avatar" />
+                    <h2 id="vmName" class="vc-name">—</h2>
+
+                    <div class="vc-badges">
+                        <span id="vmBadge" class="badge normal">Parent</span>
+                        <span id="vmStatusBadge" class="badge status-active">Active</span>
+                    </div>
+
+                    <div class="vc-links">
+                        <a id="vmPhoneLink" href="#" target="_self">—</a>
+                        <a id="vmEmailLink" href="#" target="_self">—</a>
+                    </div>
+                </div>
+
+                <div class="vc-grid">
+                    <div class="vc-item">
+                        <p class="label">Address</p>
+                        <p class="value" id="vmAddress">—</p>
+                    </div>
+                    <div class="vc-item">
+                        <p class="label">Website</p>
+                        <p class="value" id="vmId">—</p>
+                    </div>
+                    <div class="vc-item">
+                        <p class="label">Parent</p>
+                        <p class="value" id="vmLast">—</p>
+                    </div>
+                    <div class="vc-item">
+                        <p class="label">Status</p>
+                        <p class="value" id="vmTypeText">—</p>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-dark" id="messageBtn">Message</button>
+                    <button class="btn-gold" id="toggleStatusBtn">Toggle Status</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Customer Modal (kept exactly like customers.html) -->
+        <div id="addCustomerModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="acmTitle">
+            <div class="modal-content" role="document" aria-describedby="acmDesc">
+                <button class="close-btn" data-close aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M6 6L18 18M6 18L18 6" stroke="rgba(0,0,0,0.85)" stroke-width="1.6"
+                            stroke-linecap="round" />
+                    </svg>
+                </button>
+
+                <div class="acm-title">
+                    <div>
+                        <h2 id="acmTitle">Add Company</h2>
+                        <p class="lead" id="acmDesc"
+                            style="margin:6px 0 18px 0; color:var(--lux-muted); font-size:13px;">Fill details to add a company.</p>
+                    </div>
+                </div>
+
+                <form id="addCustomerForm">
+                    <div class="add-form-grid">
+                        <div>
+                            <label for="acm_name">Company Name</label>
+                            <input id="acm_name" name="name" type="text" class="input" placeholder="Company Name"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_email">Email</label>
+                            <input id="acm_email" name="email" type="email" class="input" placeholder="you@example.com"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_phone">Phone Number</label>
+                            <input id="acm_phone" name="phone" type="text" class="input" placeholder="+971 50 123 4567"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_address">Address</label>
+                            <input id="acm_address" name="address" type="text" class="input" placeholder="Address"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_id">Website</label>
+                            <input id="acm_id" name="website" type="url" class="input" placeholder="https://example.com" />
+                        </div>
+                        <div>
+                            <label for="acm_lastVisited">Parent</label>
+                            <input id="acm_lastVisited" name="parent" type="text" class="input" value="Binghatti" />
+                        </div>
+                        <div>
+                            <label for="acm_status">Status</label>
+                            <select id="acm_status" name="status" class="select" required>
+                                <option value="">Select status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label for="acm_contact">Contact Person</label>
+                            <input id="acm_contact" name="contact" type="text" class="input" placeholder="Contact Person" />
+                        </div>
+                        <div class="full">
+                            <label for="acm_notes">Notes (optional)</label>
+                            <textarea id="acm_notes" name="notes" class="textarea"
+                                placeholder="Preferences, important context, etc."></textarea>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button type="button" class="btn-cancel" data-close>Cancel</button>
+                        <button type="submit" class="btn-save" id="acmSaveBtn">Save Company</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /*****************************************************************************
+         * Contractor dataset & logic plugged into the customers.html UI
+         *
+         * - Keeps the customers look & feel (unchanged CSS/HTML)
+         * - Uses contractor sample data and contractor-style add/edit/view/delete logic
+         * - Live preview removed per request
+         * - Search, filter (status), export CSV retained
+         *****************************************************************************/
+
+        // --- Contractor sample data (kept from your contractor example)
+        let companies = [
+            { id: 1, name: 'Starlight Properties', contact: 'John Doe', email: 'john@starlight.com', phone: '123-456-7890', address: '123 Star Ave, Dubai', website: 'https://starlight.com', status: 'active', parent: 'Binghatti' },
+            { id: 2, name: 'Oasis Real Estate', contact: 'Jane Smith', email: 'jane@oasis.com', phone: '098-765-4321', address: '456 Oasis Blvd, Abu Dhabi', website: 'https://oasis.com', status: 'active', parent: 'Binghatti' },
+            { id: 3, name: 'Mirage Homes', contact: 'Sam Wilson', email: 'sam@mirage.com', phone: '555-666-7777', address: '789 Mirage Ln, Sharjah', website: 'https://mirage.com', status: 'inactive', parent: 'Binghatti' },
+            { id: 4, name: 'Golden Sands Realty', contact: 'Fatima Al-Mansoori', email: 'fatima@goldensands.com', phone: '222-333-4444', address: '101 Desert Rose St, Dubai', website: 'https://goldensands.com', status: 'active', parent: 'Binghatti' },
+            { id: 5, name: 'Emerald Estates', contact: 'Chen Wei', email: 'chen@emerald.com', phone: '111-999-8888', address: '202 Emerald Tower, Dubai', website: 'https://emerald.com', status: 'active', parent: 'Binghatti' },
+            { id: 6, name: 'Azure Waters Inc.', contact: 'Maria Garcia', email: 'maria@azure.com', phone: '777-888-9999', address: '303 Marina Bay, Abu Dhabi', website: 'https://azure.com', status: 'inactive', parent: 'Binghatti' },
+            { id: 7, name: 'Apex Property Group', contact: 'David Miller', email: 'david@apex.com', phone: '444-555-6666', address: '404 Summit Point, Dubai', website: 'https://apex.com', status: 'active', parent: 'Binghatti' },
+            { id: 8, name: 'Crestline Agents', contact: 'Aisha Khan', email: 'aisha@crestline.com', phone: '666-777-8888', address: '505 Hilltop Rd, Sharjah', website: 'https://crestline.com', status: 'active', parent: 'Binghatti' },
+            { id: 9, name: 'Pinnacle Brokers', contact: 'Kenji Tanaka', email: 'kenji@pinnacle.com', phone: '999-111-2222', address: '606 Peak Plaza, Dubai', website: 'https://pinnacle.com', status: 'inactive', parent: 'Binghatti' },
+            { id: 10, name: 'Vertex Ventures', contact: 'Olga Petrova', email: 'olga@vertex.com', phone: '888-222-3333', address: '707 Corner Tower, Dubai', website: 'https://vertex.com', status: 'active', parent: 'Binghatti' },
+            { id: 11, name: 'Horizon Holdings', contact: 'Mohammed Ali', email: 'mohammed@horizon.com', phone: '333-444-5555', address: '808 Sunset View, Abu Dhabi', website: 'https://horizon.com', status: 'active', parent: 'Binghatti' },
+            { id: 12, name: 'Nexus Network', contact: 'Sofia Rossi', email: 'sofia@nexus.com', phone: '555-444-3333', address: '909 Connection Sq, Dubai', website: 'https://nexus.com', status: 'active', parent: 'Binghatti' }
+        ];
+
+        // ---- DOM helpers
+        const $ = (s, root = document) => root.querySelector(s);
+        const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
+
+        // main elements (customers.html UI)
+        const tbody = $('#customersBody');
+        const searchInput = $('#searchInput');
+        const filterStatusBtn = $('#filterStatus');
+        const exportBtn = $('#exportBtn');
+        const openAddBtn = $('#openAdd');
+        const btnAddInline = $('#btnAddInline');
+
+        const viewModal = $('#viewModal');
+        const addModal = $('#addCustomerModal');
+
+        const addForm = $('#addCustomerForm');
+
+        // view modal fields (customers.html)
+        const vmPhoto = $('#vmPhoto');
+        const vmName = $('#vmName');
+        const vmPhoneLink = $('#vmPhoneLink');
+        const vmEmailLink = $('#vmEmailLink');
+        const vmBadge = $('#vmBadge');
+        const vmStatusBadge = $('#vmStatusBadge');
+        const vmAddress = $('#vmAddress');
+        const vmId = $('#vmId');
+        const vmLast = $('#vmLast');
+        const vmTypeText = $('#vmTypeText');
+
+        // simple internal state
+        let currentIndex = -1; // index in companies array for view/edit
+        let editingIndex = -1; // index for add/edit
+        let searchTerm = '';
+        let statusFilter = 'all'; // 'all' | 'active' | 'inactive'
+
+        // --- Utility pills
+        function statusPill(status) {
+            if (!status) return `<span class="pill gray">—</span>`;
+            return status === 'active' ? `<span class="pill green">Active</span>` : `<span class="pill gray">Inactive</span>`;
+        }
+
+        // --- Render rows function adapted to contractor data
+        function renderRows() {
+            const now = new Date();
+            const filtered = companies.filter(c => {
+                // search across several fields
+                const term = searchTerm.trim().toLowerCase();
+                if (term) {
+                    const hay = `${c.name} ${c.contact} ${c.email} ${c.phone} ${c.address} ${c.website} ${c.parent}`.toLowerCase();
+                    if (!hay.includes(term)) return false;
+                }
+                if (statusFilter !== 'all' && c.status !== statusFilter) return false;
+                return true;
+            });
+
+            tbody.innerHTML = filtered.map((c, idx) => {
+                const globalIndex = companies.indexOf(c); // real index in companies array
+                return `
+                  <tr data-index="${globalIndex}">
+                    <td class="checkbox-cell"><input type="checkbox" /></td>
+                    <td class="profile">
+                      <img src="https://i.pravatar.cc/100?u=${encodeURIComponent(c.email)}" alt="${c.name}" />
+                      <div>
+                        <div style="font-weight:600; color:var(--ink-2)">${c.name}</div>
+                        <div style="font-size:12px; color:var(--muted)">${c.contact}</div>
+                      </div>
+                    </td>
+                    <td>${c.email}</td>
+                    <td>${c.phone}</td>
+                    <td title="${c.address}">${c.address}</td>
+                    <td><a href="${c.website}" target="_blank">${c.website.replace(/^https?:\/\//, '')}</a></td>
+                    <td>${c.parent}</td>
+                    <td>${statusPill(c.status)}</td>
+                    <td>
+                      <button class="view-btn" data-view>View</button>
+                      <button class="view-btn" data-edit style="margin-left:8px; background:#6b7280;">Edit</button>
+                      <button class="view-btn" data-delete style="margin-left:8px; background:#ef4444;">Delete</button>
+                    </td>
+                  </tr>
+                `;
+            }).join('');
+
+            updateStats();
+        }
+
+        // --- Stats (minimal mapping, kept for UI)
+        function updateStats() {
+            const total = companies.length;
+            const active = companies.filter(c => c.status === 'active').length;
+            const parentCount = companies.reduce((acc, c) => { acc[c.parent] = (acc[c.parent] || 0) + 1; return acc; }, {});
+            const parentKeys = Object.keys(parentCount);
+            $('#stat-total').textContent = total;
+            $('#stat-active').textContent = `${active} / ${total}`;
+            $('#stat-vip').textContent = parentKeys.length ? `${parentKeys[0]}` : '—';
+            $('#stat-recent').textContent = companies.length ? companies.length : '—';
+        }
+
+        // --- View modal
+        function openView(index) {
+            const c = companies[index];
+            if (!c) return;
+            currentIndex = index;
+
+            vmPhoto.src = `https://i.pravatar.cc/120?u=${encodeURIComponent(c.email)}`;
+            vmName.textContent = c.name;
+            vmPhoneLink.textContent = c.phone;
+            vmPhoneLink.href = `tel:${c.phone.replace(/[^\d+]/g, '')}`;
+            vmEmailLink.textContent = c.email;
+            vmEmailLink.href = `mailto:${c.email}`;
+
+            vmBadge.textContent = c.parent;
+            vmBadge.className = 'badge ' + (c.parent ? 'normal' : '');
+
+            vmStatusBadge.textContent = c.status;
+            vmStatusBadge.className = 'badge ' + (c.status === 'active' ? 'status-active' : 'status-inactive');
+
+            vmAddress.textContent = c.address;
+            vmId.textContent = c.website;
+            vmLast.textContent = c.parent;
+            vmTypeText.textContent = c.status;
+
+            viewModal.classList.remove('hidden');
+        }
+
+        function closeModals() {
+            $$('.modal').forEach(m => m.classList.add('hidden'));
+            currentIndex = -1;
+            editingIndex = -1;
+        }
+
+        // global click handler for modal close buttons and overlay clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-close]') || (e.target.classList.contains('modal') && !e.target.closest('.modal-content'))) {
+                closeModals();
+            }
+        });
+
+        // View modal button: toggle status (replaces Toggle VIP in original)
+        $('#toggleStatusBtn').addEventListener('click', () => {
+            if (currentIndex < 0) return;
+            companies[currentIndex].status = companies[currentIndex].status === 'active' ? 'inactive' : 'active';
+            renderRows();
+            openView(currentIndex);
+        });
+
+        // Message (dummy)
+        $('#messageBtn').addEventListener('click', () => {
+            if (currentIndex < 0) return;
+            alert(`Open messaging for ${companies[currentIndex].contact} (${companies[currentIndex].email})`);
+        });
+
+        // --- Add / Edit modal (uses existing addCustomerModal form)
+        function openAddModal(isEdit = false, idx = -1) {
+            addForm.reset();
+            editingIndex = -1;
+            // set defaults
+            $('#acm_status').value = '';
+            $('#acm_lastVisited').value = 'Binghatti';
+            if (isEdit && idx > -1) {
+                editingIndex = idx;
+                const c = companies[idx];
+                $('#acm_name').value = c.name;
+                $('#acm_email').value = c.email;
+                $('#acm_phone').value = c.phone;
+                $('#acm_address').value = c.address;
+                $('#acm_id').value = c.website;
+                $('#acm_lastVisited').value = c.parent || 'Binghatti';
+                $('#acm_status').value = c.status;
+                $('#acm_contact').value = c.contact;
+                $('#acmTitle').textContent = 'Edit Company';
+                $('#acmSaveBtn').textContent = 'Update Company';
+            } else {
+                $('#acmTitle').textContent = 'Add Company';
+                $('#acmSaveBtn').textContent = 'Add Company';
+                $('#acm_lastVisited').value = 'Binghatti';
+            }
+            addModal.classList.remove('hidden');
+            $('#acm_name').focus();
+        }
+
+        openAddBtn.addEventListener('click', () => openAddModal(false));
+        btnAddInline.addEventListener('click', () => openAddModal(false));
+
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const rec = {
+                name: $('#acm_name').value.trim(),
+                contact: $('#acm_contact').value.trim(),
+                email: $('#acm_email').value.trim(),
+                phone: $('#acm_phone').value.trim(),
+                address: $('#acm_address').value.trim(),
+                website: $('#acm_id').value.trim() || '',
+                status: $('#acm_status').value || 'active',
+                parent: $('#acm_lastVisited').value.trim() || 'Binghatti'
+            };
+
+            if (editingIndex > -1) {
+                // update
+                const id = companies[editingIndex].id;
+                companies = companies.map((c, i) => i === editingIndex ? { ...rec, id } : c);
+            } else {
+                // add new
+                const newId = Date.now();
+                companies.unshift({ ...rec, id: newId });
+            }
+            renderRows();
+            addModal.classList.add('hidden');
+            editingIndex = -1;
+        });
+
+        // --- table interactions (view/edit/delete)
+        tbody.addEventListener('click', (e) => {
+            const tr = e.target.closest('tr');
+            if (!tr) return;
+            const idx = parseInt(tr.dataset.index, 10);
+            if (e.target.matches('[data-view]')) {
+                openView(idx);
+                return;
+            }
+            if (e.target.matches('[data-edit]')) {
+                openAddModal(true, idx);
+                return;
+            }
+            if (e.target.matches('[data-delete]')) {
+                const c = companies[idx];
+                const ok = confirm(`Delete "${c.name}"? This cannot be undone.`);
+                if (ok) {
+                    companies = companies.filter((_, i) => i !== idx);
+                    renderRows();
+                }
+                return;
+            }
+            // row selection toggling (same behavior as original customers.html)
+            if (e.target.tagName !== 'INPUT' && !e.target.closest('button')) {
+                toggleRowSelection(tr);
+            }
+        });
+
+        // --- Export CSV (kept from original customers.html, adapted)
+        function tableToCSV() {
+            const rows = [['Name', 'Contact', 'Email', 'Phone', 'Address', 'Website', 'Parent', 'Status']];
+            companies.forEach(c => rows.push([c.name, c.contact, c.email, c.phone, c.address, c.website, c.parent, c.status]));
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+            return csv;
+        }
+        function download(filename, text) {
+            const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+        exportBtn.addEventListener('click', () => {
+            const csv = tableToCSV(); const stamp = new Date().toISOString().slice(0, 10);
+            download(`companies_${stamp}.csv`, csv);
+        });
+
+        // --- Search & Filter (status)
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value || '';
+            renderRows();
+        });
+
+        filterStatusBtn.addEventListener('click', () => {
+            if (statusFilter === 'all') statusFilter = 'active';
+            else if (statusFilter === 'active') statusFilter = 'inactive';
+            else statusFilter = 'all';
+
+            filterStatusBtn.textContent = `Filter: ${statusFilter === 'all' ? 'All' : (statusFilter === 'active' ? 'Active' : 'Inactive')}`;
+            // append svg caret
+            filterStatusBtn.innerHTML += `
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" style="width:16px;height:16px;margin-left:8px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            `;
+            renderRows();
+        });
+
+        // --- Row selection helpers (copied/adapted from customers.html)
+        function toggleRowSelection(tr, force) {
+            const cb = tr.querySelector('input[type="checkbox"]');
+            const next = force !== undefined ? force : !cb.checked;
+            cb.checked = next; tr.classList.toggle('selected', next); tr.setAttribute('aria-selected', String(next));
+        }
+        tbody.addEventListener('change', (e) => { if (e.target.type === 'checkbox') toggleRowSelection(e.target.closest('tr'), e.target.checked); });
+
+        // --- Keyboard escape to close modals
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModals(); });
+
+        // --- Initialize
+        renderRows();
+    </script>
+</body>
+
+</html>

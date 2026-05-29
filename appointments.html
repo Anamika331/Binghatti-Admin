@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRMS - Appointments</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg-grad-a: #e9e9ee;
+            --selected: #fde68a;
+            --bg-grad-b: #fff6cf;
+            --ink: #1f2937;
+            --ink-2: #374151;
+            --muted: #6b7280;
+            --chip-blue-bg: #e0f2fe;
+            /* Scheduled */
+            --chip-blue-fg: #0284c7;
+            --chip-green-bg: #dcfce7;
+            /* Completed */
+            --chip-green-fg: #166534;
+            --chip-red-bg: #fee2e2;
+            /* Cancelled */
+            --chip-red-fg: #991b1b;
+            --shadow-2: 0 2px 8px rgba(0, 0, 0, .08);
+            --radius-xl: 1.5rem;
+            --lux-bg: #ffffff;
+            --lux-gold: #D4AF37;
+            --lux-gold-2: #b78f2a;
+            --lux-black: #000000;
+            --lux-muted: rgba(0, 0, 0, 0.65);
+            --lux-radius: 14px;
+            --lux-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            background: linear-gradient(90deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 100%);
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0 0rem;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        .add-entity-btn {
+            font-family: 'Lexend';
+            background: #fcd34d;
+            color: var(--ink);
+            font-weight: 400;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+            white-space: nowrap;
+        }
+
+        .add-entity-btn:hover {
+            background: #facc15;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+        }
+
+
+        .table-container {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            width: 98%;
+            margin: 20px auto 10px;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 20px 20px 20px;
+        }
+
+        .table-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-input {
+            padding: .7rem 1rem .7rem 2.4rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            background: #fff;
+            box-shadow: var(--shadow-2);
+            font-size: .9rem;
+            width: 340px;
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            color: var(--muted);
+        }
+
+        .filter-pill {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-family: 'Lexend';
+            color: var(--ink-2);
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            text-align: left;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: .75rem;
+        }
+
+        td {
+            padding: 1rem .75rem;
+            font-size: .9rem;
+            color: var(--ink-2);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all .15s ease;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked {
+            background-color: #111;
+            border-color: #111;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 4px;
+            height: 9px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr.selected td {
+            background-color: var(--selected);
+        }
+
+        tbody tr.selected td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        tbody tr.selected td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            object-fit: cover;
+        }
+
+        .pill {
+            padding: .35rem .75rem;
+            border-radius: 50px;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .pill.scheduled {
+            background: var(--chip-blue-bg);
+            color: var(--chip-blue-fg);
+        }
+
+        .pill.completed {
+            background: var(--chip-green-bg);
+            color: var(--chip-green-fg);
+        }
+
+        .pill.cancelled {
+            background: var(--chip-red-bg);
+            color: var(--chip-red-fg);
+        }
+
+        .view-btn {
+            background: var(--ink);
+            color: #fff;
+            padding: .4rem 1rem;
+            font-size: 12px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, .4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            animation: zoomBounce .4s ease;
+        }
+
+        @keyframes zoomBounce {
+            from {
+                transform: scale(.95);
+                opacity: 0
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        .view-card {
+            width: min(720px, 92vw);
+            padding: 28px 24px 22px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 14px 38px rgba(0, 0, 0, .12);
+            position: relative;
+        }
+
+        .view-card .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 1.6rem;
+            color: #6b7280;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .vc-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .vc-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .15);
+            margin-bottom: 1rem;
+        }
+
+        .vc-name {
+            font-size: 1.8rem;
+            font-weight: 400;
+        }
+
+        .vc-badges {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: .5rem;
+        }
+
+        .vc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .vc-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: .8rem 1rem;
+        }
+
+        .vc-item .label {
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .vc-item .value {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: .75rem;
+            margin-top: 1.5rem;
+        }
+
+        /* --- NEW MODAL STYLES --- */
+        #addAppointmentModal .modal-content {
+            width: min(720px, 94vw);
+            background: var(--lux-bg);
+            border-radius: var(--lux-radius);
+            padding: 24px;
+            box-shadow: var(--lux-shadow);
+        }
+
+        .appointment-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .appointment-modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--lux-black);
+        }
+
+        .appointment-modal-header .close-btn {
+            position: static;
+            font-size: 2rem;
+            color: var(--muted);
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Lexend', sans-serif;
+            font-size: 0.9rem;
+            background: #f3f4f6;
+            color: var(--ink-2);
+            border: 1px solid #e5e7eb;
+            transition: all .2s ease;
+        }
+
+        .tab-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4b5563;
+            font-weight: 400;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            width: 18px;
+            height: 18px;
+        }
+
+        .input,
+        .select,
+        .textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            outline: none;
+            font-size: 1rem;
+            font-family: 'Lexend', sans-serif;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .input:focus,
+        .select:focus,
+        .textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-wrapper .input {
+            padding-left: 40px;
+        }
+
+        .btn-submit-request {
+            width: 100%;
+            background: linear-gradient(90deg, var(--lux-gold), var(--lux-gold-2));
+
+            color: white;
+            font-weight: 600;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Lexend', sans-serif;
+            transition: background .2s ease;
+        }
+
+        .btn-submit-request:hover {
+            background: linear-gradient(90deg, var(--lux-gold), var(--lux-gold-2));
+
+        }
+
+        #ai-section {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        #ai-section textarea {
+            min-height: 70px;
+            margin-bottom: .75rem;
+        }
+
+        #ai-response {
+            margin-top: 1rem;
+            padding: .75rem;
+            background-color: #fff;
+            border-radius: .5rem;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        /* --- EXPORT BUTTON STYLES --- */
+        .export-dropdown-wrap {
+            position: relative;
+        }
+
+        #exportBtn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .export-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            width: 180px;
+            z-index: 10;
+            overflow: hidden;
+            animation: zoomBounce .2s ease;
+        }
+
+        .export-menu.active {
+            display: block;
+        }
+
+        .export-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 6px;
+        }
+
+        .export-menu li {
+            padding: 9px 12px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color .2s ease;
+            color: var(--ink-2);
+        }
+
+        .export-menu li:hover {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Appointments</h1>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin: 0 1rem 1.25rem;">
+            <p class="subtitle-text" style="color: var(--muted); margin: 0;">Manage all employee appointments in one
+                place.</p>
+            <button class="add-entity-btn" id="openAddModal">Schedule Appointment</button>
+        </div>
+        <div class="table-container">
+            <div class="table-controls">
+                <div class="search-wrap">
+                    <input id="searchInput" class="search-input" type="text" placeholder="Search by employee or type" />
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M10 4a6 6 0 104.472 10.03l4.249 4.249 1.414-1.414-4.249-4.249A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" />
+                    </svg>
+                </div>
+                <select id="statusFilter" class="filter-pill">
+                    <option value="all">All Statuses</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <div class="export-dropdown-wrap">
+                    <button id="exportBtn" class="filter-pill">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                            <path
+                                d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                        </svg>
+                        Export
+                    </button>
+                    <div id="exportMenu" class="export-menu">
+                        <ul>
+                            <li data-format="csv">Export as CSV</li>
+                            <li data-format="pdf">Export as PDF</li>
+                            <li data-format="json">Export as JSON</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" id="selectAll" /></th>
+                        <th>Employee</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="appointments-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="addAppointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="appointment-modal-header">
+                <h2>Schedule an Appointment</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+
+            <div class="modal-tabs">
+                <button class="tab-btn" data-tab="ai-tab-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5ZM3 8.062C3 6.76 4.235 5.765 5.53 5.824a2.5 2.5 0 0 1 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.933.933 0 0 1-.765.935c-.845.147-2.34.346-4.235.346-1.895 0-3.39-.2-4.235-.346A.933.933 0 0 1 3 9.219V8.062Zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a2.47 2.47 0 0 1-1.871-.439l-.73-.487a.25.25 0 0 0-.316.032l-.72.734a.25.25 0 0 0 .032.316l.73.487c.868.579 1.81.93 2.826.93s1.958-.351 2.826-.93l.73-.487a.25.25 0 0 0 .032-.316l-.72-.734a.25.25 0 0 0-.316-.032l-.73.487a2.471 2.471 0 0 1-1.871.439l-.92-.9a.25.25 0 0 0-.217-.068Z" />
+                        <path
+                            d="M0 3.5A1.5 1.5 0 0 1 1.5 2h13A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5v-9ZM1.5 3a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13Z" />
+                    </svg>
+                    AI Assistant
+                </button>
+                <button class="tab-btn active" data-tab="manual-form-tab-content">
+                    Manual Form
+                </button>
+            </div>
+
+            <div id="ai-tab-content" class="tab-content">
+                <div id="ai-section">
+                    <textarea id="ai-appt-input" class="textarea" rows="3"
+                        placeholder="e.g., 'Book a performance review for Priya Sharma for next Monday at 3 PM'"></textarea>
+                    <button id="ai-generate-btn" class="btn-submit-request"
+                        style="width: auto; padding: 10px 16px; font-size: 0.9rem; margin-top: .75rem;">Generate from
+                        Text</button>
+                    <div id="ai-response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <div id="manual-form-tab-content" class="tab-content active">
+                <form id="appointment-form">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="appt-type">Appointment Type</label>
+                            <select id="appt-type" class="select">
+                                <option>General Inquiry</option>
+                                <option>Onboarding</option>
+                                <option>Performance Review</option>
+                                <option>Exit Interview</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="appt-with-whom">With Whom</label>
+                            <input id="appt-with-whom" type="text" class="input"
+                                placeholder="e.g., HR Department or Name">
+                        </div>
+                        <div class="form-field">
+                            <label for="appt-date">Date</label>
+                            <input id="appt-date" type="date" class="input">
+                        </div>
+                        <div class="form-field">
+                            <label for="appt-time">Time</label>
+                            <input id="appt-time" type="time" class="input">
+                        </div>
+                        <div class="form-field full-width">
+                            <label for="appt-notes">Notes</label>
+                            <textarea id="appt-notes" class="textarea" rows="4"
+                                placeholder="Add any relevant notes..."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit-request">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewAppointmentModal" class="modal">
+        <div class="modal-content view-card">
+            <button class="close-btn">&times;</button>
+            <div class="vc-header">
+                <img id="vmPhoto" class="vc-avatar" src="" alt="Avatar" />
+                <h2 id="vmName" class="vc-name"></h2>
+                <div class="vc-badges">
+                    <span class="pill" id="vmStatusBadge"></span>
+                </div>
+            </div>
+            <div class="vc-grid">
+                <div class="vc-item">
+                    <p class="label">Appointment Type</p>
+                    <p class="value" id="vmType"></p>
+                </div>
+                <div class="vc-item">
+                    <p class="label">Date</p>
+                    <p class="value" id="vmDate"></p>
+                </div>
+                <div class="vc-item">
+                    <p class="label">Time</p>
+                    <p class="value" id="vmTime"></p>
+                </div>
+                <div class="vc-item">
+                    <p class="label">Employee ID</p>
+                    <p class="value" id="vmEmployeeId"></p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="add-entity-btn" style="background-color: #6c757d; color: white;">Reschedule</button>
+                <button class="add-entity-btn" style="background-color: #dc3545; color: white;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const $ = sel => document.querySelector(sel);
+        const $$ = sel => document.querySelectorAll(sel);
+
+        // --- Data & State ---
+        const employeeData = [
+            { id: 'EMP-001', name: 'Priya Sharma', photo: 'https://i.pravatar.cc/150?img=1' },
+            { id: 'EMP-002', name: 'Michael Chen', photo: 'https://i.pravatar.cc/150?img=2' },
+            { id: 'EMP-006', name: 'Rohan Verma', photo: 'https://i.pravatar.cc/150?img=6' },
+        ];
+        let appointmentData = [
+            { id: 'APT-106', employeeId: 'EMP-006', type: 'Onboarding', date: '2025-08-19', time: '15:30', status: 'scheduled' },
+            { id: 'APT-107', employeeId: 'EMP-001', type: 'Performance Review', date: '2025-08-21', time: '10:00', status: 'scheduled' },
+            { id: 'APT-104', employeeId: 'EMP-002', type: 'Exit Interview', date: '2025-08-11', time: '11:00', status: 'completed' },
+            { id: 'APT-105', employeeId: 'EMP-001', type: 'General Inquiry', date: '2025-08-09', time: '14:00', status: 'cancelled' },
+            { id: 'APT-106', employeeId: 'EMP-006', type: 'Onboarding', date: '2025-08-19', time: '15:30', status: 'scheduled' },
+            { id: 'APT-107', employeeId: 'EMP-001', type: 'Performance Review', date: '2025-08-21', time: '10:00', status: 'scheduled' },
+            { id: 'APT-104', employeeId: 'EMP-002', type: 'Exit Interview', date: '2025-08-11', time: '11:00', status: 'completed' },
+            { id: 'APT-105', employeeId: 'EMP-001', type: 'General Inquiry', date: '2025-08-09', time: '14:00', status: 'cancelled' },
+
+        ];
+        let parsedAiData = null;
+
+        function formatDate(iso) {
+            if (!iso) return '';
+            const date = new Date(iso);
+            // Adjust for timezone offset to prevent day-before issues
+            const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() + userTimezoneOffset).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // --- Render Functions ---
+        function renderTable() {
+            const statusFilter = $('#statusFilter').value;
+            const searchFilter = $('#searchInput').value.toLowerCase();
+            const findEmp = id => employeeData.find(e => e.id === id) || {};
+
+            const filteredData = appointmentData
+                .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by most recent
+                .filter(appt => {
+                    const emp = findEmp(appt.employeeId);
+                    return (statusFilter === 'all' || appt.status === statusFilter) &&
+                        (emp.name?.toLowerCase().includes(searchFilter) || appt.type.toLowerCase().includes(searchFilter));
+                });
+            $('#appointments-table-body').innerHTML = filteredData.map(appt => {
+                const emp = findEmp(appt.employeeId);
+                return `
+                <tr data-id="${appt.id}">
+                    <td class="checkbox-cell"><input type="checkbox"/></td>
+                    <td><div class="profile"><img src="${emp.photo || ''}"/> ${emp.name || 'N/A'}</div></td>
+                    <td>${appt.type}</td>
+                    <td>${formatDate(appt.date)}</td>
+                    <td><span class="pill ${appt.status}">${appt.status}</span></td>
+                    <td><button class="view-btn" data-action="view">View</button></td>
+                </tr>`
+            }).join('');
+        }
+
+        function openViewModal(appt) {
+            const emp = employeeData.find(e => e.id === appt.employeeId) || {};
+            $('#vmPhoto').src = emp.photo;
+            $('#vmName').textContent = emp.name;
+            $('#vmEmployeeId').textContent = emp.id;
+            $('#vmType').textContent = appt.type;
+            const statusBadge = $('#vmStatusBadge');
+            statusBadge.textContent = appt.status;
+            statusBadge.className = `pill ${appt.status}`;
+            $('#vmDate').textContent = formatDate(appt.date);
+            $('#vmTime').textContent = new Date(`1970-01-01T${appt.time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            $('#viewAppointmentModal').classList.add('active');
+        }
+
+        // --- Modals & Forms ---
+        const addModal = $('#addAppointmentModal');
+        const viewModal = $('#viewAppointmentModal');
+
+        $('#openAddModal').addEventListener('click', () => addModal.classList.add('active'));
+        $$('.close-btn').forEach(btn => btn.addEventListener('click', (e) => e.target.closest('.modal').classList.remove('active')));
+
+        // --- NEW Tab Logic for Add Modal ---
+        $$('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTabId = button.dataset.tab;
+                $$('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                $$('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === targetTabId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // --- AI Assistant Logic ---
+        $('#ai-generate-btn').addEventListener('click', () => {
+            const text = $('#ai-appt-input').value;
+            if (!text) return;
+            parsedAiData = parseAiRequest(text.toLowerCase());
+            const empName = (employeeData.find(e => e.id === parsedAiData.employeeId) || {}).name || 'An unknown employee';
+            const dateStr = formatDate(parsedAiData.date);
+            const timeStr = new Date(`1970-01-01T${parsedAiData.time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            const confirmationMsg = `Okay, I'll set up a <strong>${parsedAiData.type}</strong> for <strong>${empName}</strong> on <strong>${dateStr}</strong> at <strong>${timeStr}</strong>. Is this correct?`;
+
+            const aiResponseDiv = $('#ai-response');
+            aiResponseDiv.style.display = 'block';
+            aiResponseDiv.innerHTML = `${confirmationMsg}
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                    <button type="button" class="add-entity-btn" id="ai-confirm" style="background:#059669; padding:4px 10px; font-size:12px;">Yes, Fill Form</button>
+                    <button type="button" class="add-entity-btn" id="ai-clear" style="background:var(--muted); padding:4px 10px; font-size:12px;">Clear</button>
+                </div>`;
+        });
+
+        $('#addAppointmentModal').addEventListener('click', e => {
+            if (e.target.id === 'ai-confirm' && parsedAiData) {
+                const empName = (employeeData.find(e => e.id === parsedAiData.employeeId) || {}).name || '';
+                $('#appt-with-whom').value = empName;
+                $('#appt-type').value = parsedAiData.type;
+                $('#appt-date').value = parsedAiData.date;
+                $('#appt-time').value = parsedAiData.time;
+                $('#ai-response').style.display = 'none';
+
+                // Switch to the manual form tab
+                $('[data-tab="manual-form-tab-content"]').click();
+            }
+            if (e.target.id === 'ai-clear') {
+                $('#ai-response').style.display = 'none';
+                $('#ai-appt-input').value = '';
+                parsedAiData = null;
+            }
+        });
+
+        function parseAiRequest(text) {
+            const today = new Date();
+            let data = { employeeId: null, type: 'General Inquiry', date: today.toISOString().split('T')[0], time: '09:00' };
+
+            employeeData.forEach(emp => { if (text.includes(emp.name.toLowerCase())) data.employeeId = emp.id; });
+            if (text.includes('review')) data.type = 'Performance Review';
+            if (text.includes('exit')) data.type = 'Exit Interview';
+            if (text.includes('onboard')) data.type = 'Onboarding';
+
+            let date = new Date();
+            if (text.includes('tomorrow')) date.setDate(today.getDate() + 1);
+            else if (text.includes('in 3 days')) date.setDate(today.getDate() + 3);
+            else {
+                const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                for (let i = 0; i < days.length; i++) {
+                    if (text.includes(days[i])) {
+                        let currentDay = today.getDay();
+                        let targetDay = i;
+                        let dayDifference = (targetDay - currentDay + 7) % 7;
+                        if (dayDifference === 0) dayDifference = 7; // if it's 'today', schedule for next week
+                        date.setDate(today.getDate() + dayDifference);
+                        break;
+                    }
+                }
+            }
+            data.date = date.toISOString().split('T')[0];
+
+            const timeMatch = text.match(/(\d{1,2})(:\d{2})?\s?(am|pm)/);
+            if (timeMatch) {
+                let hour = parseInt(timeMatch[1]);
+                const minute = timeMatch[2] ? timeMatch[2] : ':00';
+                const period = timeMatch[3];
+                if (period === 'pm' && hour < 12) hour += 12;
+                if (period === 'am' && hour === 12) hour = 0; // Midnight case
+                data.time = `${String(hour).padStart(2, '0')}${minute}`;
+            } else if (text.includes('afternoon')) data.time = '14:00';
+            else if (text.includes('morning')) data.time = '10:00';
+
+            return data;
+        }
+
+        // --- Event Listeners ---
+        $('#statusFilter').addEventListener('change', renderTable);
+        $('#searchInput').addEventListener('input', renderTable);
+
+        $('#appointments-table-body').addEventListener('click', e => {
+            const tr = e.target.closest('tr');
+            if (!tr) return;
+            if (e.target.matches('[data-action="view"]')) {
+                const appt = appointmentData.find(a => a.id === tr.dataset.id);
+                if (appt) openViewModal(appt);
+                return;
+            }
+            const checkbox = tr.querySelector('input[type="checkbox"]');
+            if (tr.classList.contains('selected')) {
+                tr.classList.remove('selected');
+                checkbox.checked = false;
+            } else {
+                $$('#appointments-table-body tr.selected').forEach(row => {
+                    row.classList.remove('selected');
+                    row.querySelector('input').checked = false;
+                });
+                tr.classList.add('selected');
+                checkbox.checked = true;
+            }
+        });
+
+        // --- EXPORT BUTTON LOGIC ADDED HERE ---
+        const exportBtn = $('#exportBtn');
+        const exportMenu = $('#exportMenu');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevents the document click listener from firing immediately
+                exportMenu.classList.toggle('active');
+            });
+        }
+        if (exportMenu) {
+            exportMenu.addEventListener('click', (e) => {
+                if (e.target.tagName === 'LI') {
+                    const format = e.target.dataset.format;
+                    alert(`Exporting data as ${format.toUpperCase()}... (This is a UI demonstration)`);
+                    exportMenu.classList.remove('active');
+                }
+            });
+        }
+        // Close dropdown when clicking anywhere else on the page
+        document.addEventListener('click', () => {
+            if (exportMenu && exportMenu.classList.contains('active')) {
+                exportMenu.classList.remove('active');
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', renderTable);
+    </script>
+</body>
+
+</html>

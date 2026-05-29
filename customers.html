@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="style.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-grad-a: #e9e9ee;
+            --selected: #fde68a;
+            --bg-grad-b: #fff6cf;
+            --ink: #1f2937;
+            --ink-2: #374151;
+            --muted: #6b7280;
+            --chip-green-bg: #ecfdf5;
+            --chip-green-fg: #047857;
+            --chip-gray-bg: #f3f4f6;
+            --chip-gray-fg: #6b7280;
+            --chip-gold-bg: #fef9c3;
+            --chip-gold-fg: #a16207;
+            --shadow-1: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
+            --shadow-2: 0 2px 8px rgba(0, 0, 0, .08);
+            --pill-pad: .75rem 2rem;
+            --radius-xl: 1.5rem;
+
+            /* White/Gold modal theme */
+            --lux-bg: #ffffff;
+            --lux-panel: rgba(0, 0, 0, 0.03);
+            --lux-glass: rgba(0, 0, 0, 0.04);
+            --lux-gold: #D4AF37;
+            --lux-gold-2: #b78f2a;
+            --lux-black: #000000;
+            --lux-muted: rgba(0, 0, 0, 0.65);
+            --lux-radius: 14px;
+            --lux-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            background: linear-gradient(90deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 100%);
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0 0rem;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        /* Top row actions  */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            max-width: 100%;
+            margin: 0 1rem 1.25rem;
+        }
+
+        .dflex-secend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .progress-item {
+            text-align: center;
+        }
+
+        .progress-item p {
+            font-size: .875rem;
+            color: var(--muted);
+            margin: .25rem 0;
+        }
+
+        .progress-bar {
+            font-weight: 500;
+            padding: var(--pill-pad);
+            border-radius: 9999px;
+            box-shadow: var(--shadow-2);
+            white-space: nowrap;
+        }
+
+        .progress-interviews {
+            background: #1f2937;
+            color: #fff;
+        }
+
+        .progress-hired {
+            background: #fcd34d;
+            color: var(--ink);
+        }
+
+        .progress-project-time {
+            background: #e5e7eb;
+            color: var(--ink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-project-time::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .12) 10px, transparent 10px, transparent 20px);
+            opacity: .75;
+        }
+
+        .progress-output {
+            border: 1px solid #d1d5db;
+            color: var(--ink);
+            background: #fff;
+        }
+
+        .add-entity-btn {
+            font-family: 'Lexend';
+            background: #fcd34d;
+            color: var(--ink);
+            font-weight: 400;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+            white-space: nowrap;
+        }
+
+        .add-entity-btn:hover {
+            background: #facc15;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+        }
+
+        /* Table card */
+        .table-container {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            width: 98%;
+            margin: 20px auto 10px;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 20px 20px 20px;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            padding: 2rem;
+            padding-top: 90px;
+        }
+
+        @media (max-width:720px) {
+            .table-scroll {
+                padding: 1rem;
+                padding-top: 90px;
+            }
+        }
+
+        .table-top-btn-boxes {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .btn-tble1 {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: none;
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+        }
+
+        .btn-tble2 {
+            min-width: 110px;
+            height: 40px;
+            padding: 0 14px;
+            background: #fff;
+            border-radius: 30px;
+            border: none;
+            box-shadow: var(--shadow-2);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead {
+            background: #f9fafb;
+            position: sticky;
+            top: 0;
+            z-index: 0;
+        }
+
+        th {
+            text-align: left;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: .75rem;
+        }
+
+        td {
+            padding: 1rem .75rem;
+            font-size: .9rem;
+            color: var(--ink-2);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: border-color .15s ease, background .15s ease;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked {
+            background-color: #111;
+            border-color: #111;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 4px;
+            height: 9px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* SELECTED ROW */
+        tbody tr.selected td {
+            background-color: var(--selected);
+        }
+
+        tbody tr.selected td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr.selected td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        tbody tr.selected::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 2px;
+            bottom: 2px;
+            border-radius: 14px;
+            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+        }
+
+        tbody tr[aria-selected="true"] {
+            outline: 2px solid transparent;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            object-fit: cover;
+        }
+
+        .pill {
+            padding: .35rem .75rem;
+            border-radius: 9999px;
+            font-size: .75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .pill.green {
+            background: var(--chip-green-bg);
+            color: var(--chip-green-fg);
+        }
+
+        .pill.gray {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .pill.vip {
+            background: var(--chip-gold-bg);
+            color: var(--chip-gold-fg);
+        }
+
+        .view-btn {
+            background: var(--ink);
+            color: #fff;
+            padding: .4rem 1rem;
+            font-size: 12px;
+            font-weight: 100;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: transform .2s ease, background .2s ease;
+            box-shadow: var(--shadow-2);
+            position: relative;
+            font-family: 'Lexend';
+        }
+
+        .view-btn:hover {
+            background: #374151;
+            transform: translateY(-1px);
+        }
+
+        .view-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, .28), transparent);
+            opacity: 0;
+            border-radius: 9999px;
+            transition: opacity .3s ease;
+        }
+
+        .view-btn:hover::before {
+            opacity: 1;
+        }
+
+        /* Base modal (used by View) */
+        .modal {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, .4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: min(900px, 92vw);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+            position: relative;
+            animation: zoomBounce .4s ease;
+        }
+
+        @keyframes zoomBounce {
+            0% {
+                transform: scale(.8);
+                opacity: 0
+            }
+
+            60% {
+                transform: scale(1.05);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 1.6rem;
+            color: #6b7280;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #111827;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f3f4f6;
+        }
+
+        .modal-header-text h2 {
+            font-size: 1.6rem;
+            margin: 0;
+            color: var(--ink);
+        }
+
+        .modal-header-text p {
+            margin: .15rem 0 0;
+            color: var(--muted);
+        }
+
+        .modal-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .75rem 1.25rem;
+            margin-top: .75rem;
+        }
+
+        .modal-detail {
+            border: 1px solid #e5e7eb;
+            border-radius: .75rem;
+            padding: .75rem 1rem;
+        }
+
+        .modal-detail .label {
+            font-size: .75rem;
+            color: var(--muted);
+            margin: 0 0 .15rem;
+            font-weight: 600;
+        }
+
+        .modal-detail .value {
+            font-size: .95rem;
+            color: var(--ink-2);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: .6rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .btn-dark {
+            font-family: 'Lexend';
+            background: var(--ink);
+            color: #fff;
+            border: none;
+            border-radius: 9999px;
+            padding: .55rem 1.2rem;
+            font-weight: 100;
+            cursor: pointer;
+        }
+
+        .btn-gold {
+            font-family: 'Lexend';
+            background: #fcd34d;
+            color: var(--ink);
+            border: none;
+            border-radius: 9999px;
+            padding: .55rem 1.2rem;
+            font-weight: 100;
+            cursor: pointer;
+        }
+
+        /* Row entrance */
+        tbody tr {
+            animation: fadeSlideIn .45s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        tbody tr:nth-child(even) {
+            animation-delay: .05s;
+        }
+
+        tbody tr:nth-child(odd) {
+            animation-delay: .1s;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive niceties */
+        @media (max-width:720px) {
+            .progress-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .add-entity-btn {
+                width: 100%;
+            }
+
+            .modal-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                min-width: 900px;
+            }
+        }
+
+        /* Search + Sort (table header controls) */
+        .table-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-input {
+            padding: .7rem 1rem .7rem 2.4rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            background: #fff;
+            box-shadow: var(--shadow-2);
+            font-size: .9rem;
+            color: black;
+            font-weight: 100;
+            font-family: 'Lexend', sans-serif;
+            width: min(340px, 58vw);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .btn-sort {
+            min-width: 130px;
+            height: 40px;
+            padding: 0 14px;
+            background: #fff;
+            border-radius: 30px;
+            border: none;
+            box-shadow: var(--shadow-2);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sort.is-active {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        @media (max-width:720px) {
+            .search-input {
+                width: 56vw;
+            }
+        }
+
+        /* Pill-style filter buttons */
+        .filter-pill {
+            background: #fff;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.7rem 1.4rem;
+            font-size: 0.9rem;
+            font-family: 'Lexend';
+            font-weight: 100;
+            color: var(--ink-2);
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .filter-pill:hover {
+            background: #f9fafb;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+            transform: translateY(-1px);
+        }
+
+        .filter-pill svg {
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        /* Selected row highlight */
+        tr.selected {
+            background-color: #fde68a;
+        }
+
+        tbody tr.selected td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr.selected td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* ========= NEW: Add Customer Modal (white/gold luxury style) ========= */
+        #addCustomerModal {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 28px;
+        }
+
+        #addCustomerModal .modal-content {
+            width: 760px;
+            max-width: calc(100% - 48px);
+            background: var(--lux-bg);
+            border-radius: var(--lux-radius);
+            padding: 22px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: var(--lux-shadow);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            align-items: start;
+            transform: translateY(12px);
+            animation: pop 260ms ease;
+            overflow: hidden;
+        }
+
+        @keyframes pop {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(.995)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        /* Title */
+        #addCustomerModal .acm-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 4px 0 4px 0;
+        }
+
+        #addCustomerModal .acm-title h2 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: .2px;
+            font-weight: 100;
+            color: var(--lux-black);
+        }
+
+        #addCustomerModal .acm-title p {
+            margin: 6px 0 0 0;
+            color: var(--lux-muted);
+            font-size: 13px;
+        }
+
+        /* Close button (square) */
+        #addCustomerModal .close-btn {
+            all: unset;
+            position: absolute;
+            right: 22px;
+            top: 18px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+        }
+
+        #addCustomerModal .close-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Form grid */
+        #addCustomerModal .add-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        #addCustomerModal label {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: var(--lux-muted);
+            font-weight: 100;
+        }
+
+        #addCustomerModal .input,
+        #addCustomerModal .select,
+        #addCustomerModal .textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: var(--lux-black);
+            outline: none;
+            font-size: 18px;
+            font-weight: 100;
+            transition: box-shadow .12s ease, border-color .12s ease;
+            font-family: 'Lexend', sans-serif;
+        }
+
+        #addCustomerModal .textarea {
+            min-height: 84px;
+            resize: vertical;
+            grid-column: 1 / -1;
+        }
+
+        #addCustomerModal .input:focus,
+        #addCustomerModal .select:focus,
+        #addCustomerModal .textarea:focus {
+            box-shadow: 0 6px 18px rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.32);
+        }
+
+        #addCustomerModal .full {
+            grid-column: 1 / -1;
+        }
+
+        /* Actions */
+        #addCustomerModal .actions {
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #addCustomerModal .btn-cancel {
+            font-family: "Lexend";
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: var(--lux-muted);
+            cursor: pointer;
+        }
+
+        #addCustomerModal .btn-save {
+            font-family: "Lexend";
+            background: linear-gradient(90deg, var(--lux-gold), var(--lux-gold-2));
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 100;
+            cursor: pointer;
+            box-shadow: 0 8px 26px rgba(212, 175, 55, 0.14);
+        }
+
+        @media (max-width: 900px) {
+            #addCustomerModal .modal-content {
+                padding: 16px;
+            }
+
+            #addCustomerModal .add-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .subtitle-text {
+            font-weight: 100;
+            font-size: .9rem;
+            color: black;
+            margin: .25rem 0 0;
+        }
+
+        /* === View Profile Modal (centered card) === */
+        .view-card {
+            width: min(720px, 92vw);
+            padding: 28px 24px 22px;
+            border-radius: 18px;
+            border: 1px solid rgba(0, 0, 0, .06);
+            box-shadow: 0 14px 38px rgba(0, 0, 0, .12);
+        }
+
+        .vc-header {
+            display: grid;
+            justify-items: center;
+            text-align: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .vc-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 9999px;
+            object-fit: cover;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .15);
+        }
+
+        .vc-name {
+            margin: 8px 0 2px;
+            font-size: 1.8rem;
+            font-weight: 100;
+            color: var(--ink);
+        }
+
+        .vc-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: .4rem .7rem;
+            border-radius: 9999px;
+            font-size: .85rem;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: #374151;
+            box-shadow: var(--shadow-2);
+        }
+
+        .badge.vip {
+            background: var(--chip-gold-bg);
+            color: var(--chip-gold-fg);
+        }
+
+        .badge.normal {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .badge.status-active {
+            background: var(--chip-green-bg);
+            color: var(--chip-green-fg);
+        }
+
+        .badge.status-inactive {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .vc-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .vc-links a {
+            text-decoration: none;
+            padding: .5rem .9rem;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: var(--ink-2);
+            font-weight: 100;
+            box-shadow: var(--shadow-2);
+        }
+
+        .vc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .75rem 1rem;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .vc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .vc-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: .8rem 1rem;
+            background: #fff;
+        }
+
+        .vc-item .label {
+            font-size: .75rem;
+            color: var(--muted);
+            font-weight: 100;
+            margin: 0 0 .2rem;
+        }
+
+        .vc-item .value {
+            font-size: .95rem;
+            color: var(--ink-2);
+            margin: 0;
+            font-weight: 100;
+        }
+
+        /* close button (square, top-right) */
+        .view-card .close-btn {
+            right: 14px;
+            top: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, .06);
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+            color: var(--ink-2);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="AI-assistant.html" class="floating-ai-btn" id="aiToggle">
+        <svg class="svg-inline--fa fa-robot fa-w-20" aria-hidden="true" data-prefix="fas" data-icon="robot" role="img"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" data-fa-i2svg="">
+            <path fill="currentColor"
+                d="M0 256v128c0 17.7 14.3 32 32 32h32V224H32c-17.7 0-32 14.3-32 32zM464 96H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H176c-44.2 0-80 35.8-80 80v272c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V176c0-44.2-35.8-80-80-80zM256 416h-64v-32h64v32zm-32-120c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zm128 120h-64v-32h64v32zm96 0h-64v-32h64v32zm-32-120c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zm192-72h-32v192h32c17.7 0 32-14.3 32-32V256c0-17.7-14.3-32-32-32z">
+            </path>
+        </svg>
+    </a>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="pixellent.png" class="logo-image">
+                <div class="logo-text"></div>
+            </div>
+
+
+            <nav class="main-nav">
+                <a href="admin_dashboard.html">Dashboard</a>
+                <a href="people.html">People</a>
+                <a href="agent-company.html">Companies</a>
+                <!-- <a href="agent-company.html">Agent</a>
+                <a href="contractor-company.html">Contractor</a> -->
+                <a href="customers.html" class="active">Customers</a>
+                <a href="pantry.html">Pantry</a>
+                <a href="salary_admin.html">Salary</a>
+                <a href="admin-attendance.html">Attendance</a>
+                <!-- <a href="leave.html">Leave</a> -->
+                <a href="parking.html">Parking</a>
+                <a href="delivery.html">Delivery</a>
+
+                <a href="meeting-room.html">Facilities</a>
+                <a href="visitior-list.html">Visitor</a>
+                <a href="anoucement.html">Insights</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="AI-assistant.html" class="setting-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20"
+                        height="20">
+                        <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM12 20a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"></path>
+                    </svg>
+                    <span>AI</span>
+                </a>
+                <!-- <button class="icon-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22ZM19 17v-6a7 7 0 0 0-7-7 7 7 0 0 0-7 7v6l-2 2v1h18v-1l-2-2Z">
+                        </path>
+                    </svg>
+                </button> -->
+                <div class="user-profile-btn"></div>
+            </div>
+        </header>
+        <div class="dashboard-header">
+            <h1>Customers</h1>
+        </div>
+
+        <div class="progress-container" style="display:none">
+            <div class="dflex-secend">
+                <div class="progress-item">
+                    <p>Total</p>
+                    <div class="progress-bar progress-interviews" id="stat-total">—</div>
+                </div>
+                <div class="progress-item">
+                    <p>Active</p>
+                    <div class="progress-bar progress-hired" id="stat-active">—</div>
+                </div>
+                <div class="progress-item">
+                    <p>VIP Share</p>
+                    <div class="progress-bar progress-project-time" id="stat-vip">—</div>
+                </div>
+                <div class="progress-item">
+                    <p>Last 30d Visits</p>
+                    <div class="progress-bar progress-output" id="stat-recent">—</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin: 0 1rem 1.25rem;">
+            <div>
+                <p class="subtitle-text">Manage and track all your customers in one place — organize profiles, monitor
+                    interactions, and stay on top of every relationship with ease.</p>
+            </div>
+            <button class="add-entity-btn" id="openAdd">Add Customer</button>
+        </div>
+
+        <div class="table-container">
+            <div class="table-controls">
+                <div class="search-wrap">
+                    <input id="searchInput" class="search-input" type="text" placeholder="Search customers" />
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M10 4a6 6 0 104.472 10.03l4.249 4.249 1.414-1.414-4.249-4.249A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" />
+                    </svg>
+                </div>
+                <button class="filter-pill" id="filterDepartment">Customer type
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <button class="filter-pill" id="filterDepartment">Export Customers</button>
+            </div>
+
+            <div class="table-top-btn-boxes">
+                <button class="btn-tble1" id="btnAddInline" title="Add">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
+                        fill="currentColor">
+                        <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+                    </svg>
+                </button>
+                <button class="btn-tble1" id="btnSwap" title="Toggle Compact Rows">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
+                        fill="currentColor">
+                        <path d="M3 7h13v2H3V7zm5 4h13v2H8v-2zM3 15h13v2H3v-2z" />
+                    </svg>
+                </button>
+                <button class="btn-tble2" id="exportBtn" title="Export CSV">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
+                        fill="currentColor">
+                        <path d="M5 20h14v-2H5v2zM11 4v8.17L8.41 9.59 7 11l5 5 5-5-1.41-1.41L13 12.17V4h-2z" />
+                    </svg>
+                    Export
+                </button>
+            </div>
+
+            <table id="customersTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>UAE ID / Passport</th>
+                        <th>Last visited</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="customersBody"></tbody>
+            </table>
+        </div>
+
+        <!-- View Modal -->
+        <!-- View Modal -->
+        <div id="viewModal" class="modal hidden">
+            <div class="modal-content view-card">
+                <span class="close-btn" data-close>&times;</span>
+
+                <div class="vc-header">
+                    <img id="vmPhoto" class="vc-avatar" src="" alt="Avatar" />
+                    <h2 id="vmName" class="vc-name">—</h2>
+
+                    <div class="vc-badges">
+                        <span id="vmBadge" class="badge normal">Normal</span>
+                        <span id="vmStatusBadge" class="badge status-active">Active</span>
+                    </div>
+
+                    <div class="vc-links">
+                        <a id="vmPhoneLink" href="#" target="_self">—</a>
+                        <a id="vmEmailLink" href="#" target="_self">—</a>
+                    </div>
+                </div>
+
+                <div class="vc-grid">
+                    <div class="vc-item">
+                        <p class="label">Address</p>
+                        <p class="value" id="vmAddress">—</p>
+                    </div>
+                    <div class="vc-item">
+                        <p class="label">UAE ID / Passport</p>
+                        <p class="value" id="vmId">—</p>
+                    </div>
+                    <div class="vc-item">
+                        <p class="label">Last Visited</p>
+                        <p class="value" id="vmLast">—</p>
+                    </div>
+                    <div class="vc-item">
+                        <p class="label">Customer Type</p>
+                        <p class="value" id="vmTypeText">—</p>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-dark">Message</button>
+                    <button class="btn-gold" id="toggleVipBtn">Toggle VIP</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Add Customer Modal (styled like the luxury Add Visitor) -->
+        <div id="addCustomerModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="acmTitle">
+            <div class="modal-content" role="document" aria-describedby="acmDesc">
+                <button class="close-btn" data-close aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M6 6L18 18M6 18L18 6" stroke="rgba(0,0,0,0.85)" stroke-width="1.6"
+                            stroke-linecap="round" />
+                    </svg>
+                </button>
+
+                <div class="acm-title">
+                    <div>
+                        <h2 id="acmTitle">Add Customer</h2>
+                        <p class="lead" id="acmDesc"
+                            style="margin:6px 0 18px 0; color:var(--lux-muted); font-size:13px;">Fill the details to add
+                            a customer record. All fields are saved to your system.</p>
+                    </div>
+                </div>
+
+                <form id="addCustomerForm">
+                    <div class="add-form-grid">
+                        <div>
+                            <label for="acm_name">Full name</label>
+                            <input id="acm_name" name="name" type="text" class="input" placeholder="Full Name"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_email">Email</label>
+                            <input id="acm_email" name="email" type="email" class="input" placeholder="you@example.com"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_phone">Phone Number</label>
+                            <input id="acm_phone" name="phone" type="text" class="input" placeholder="+971 50 123 4567"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_address">Address</label>
+                            <input id="acm_address" name="address" type="text" class="input" placeholder="Address"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_id">UAE ID / Passport</label>
+                            <input id="acm_id" name="id" type="text" class="input" placeholder="UAE ID / Passport"
+                                required />
+                        </div>
+                        <div>
+                            <label for="acm_lastVisited">Last visited</label>
+                            <input id="acm_lastVisited" name="lastVisited" type="date" class="input" required />
+                        </div>
+                        <div>
+                            <label for="acm_status">Status</label>
+                            <select id="acm_status" name="status" class="select" required>
+                                <option value="">Select status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="acm_type">Type</label>
+                            <select id="acm_type" name="type" class="select" required>
+                                <option value="">Select type</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Normal">Normal</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label for="acm_image">Avatar Image URL (optional)</label>
+                            <input id="acm_image" name="image" type="url" class="input" placeholder="https://..." />
+                        </div>
+                        <div class="full">
+                            <label for="acm_notes">Notes (optional)</label>
+                            <textarea id="acm_notes" name="notes" class="textarea"
+                                placeholder="Preferences, important context, etc."></textarea>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button type="button" class="btn-cancel" data-close>Cancel</button>
+                        <button type="submit" class="btn-save">Add Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---- Demo Data ---------------------------------------------------------
+        const customers = [
+            { name: "Omar Al-Mansouri", email: "omar.mansouri@example.com", phone: "+971 50 111 2233", address: "Dubai Marina, Dubai, UAE", id: "UAE ID 784-1987-1234567-1", lastVisited: "2025-08-06", status: "Active", type: "VIP", image: "https://randomuser.me/api/portraits/men/32.jpg" },
+            { name: "Sara Khan", email: "sara.khan@example.com", phone: "+971 52 987 6543", address: "Al Nahda, Sharjah, UAE", id: "Passport PK1234567", lastVisited: "2025-07-28", status: "Active", type: "Normal", image: "https://randomuser.me/api/portraits/women/44.jpg" },
+            { name: "James Parker", email: "j.parker@example.com", phone: "+971 58 222 8899", address: "JLT, Dubai, UAE", id: "Passport UK9988776", lastVisited: "2025-08-01", status: "Inactive", type: "VIP", image: "https://randomuser.me/api/portraits/men/12.jpg" },
+            { name: "Aisha Al Suwaidi", email: "aisha.suwaidi@example.com", phone: "+971 55 443 1100", address: "Khalifa City, Abu Dhabi, UAE", id: "UAE ID 784-1992-7654321-3", lastVisited: "2025-07-12", status: "Active", type: "Normal", image: "https://randomuser.me/api/portraits/women/65.jpg" },
+            { name: "Omar Al-Mansouri", email: "omar.mansouri@example.com", phone: "+971 50 111 2233", address: "Dubai Marina, Dubai, UAE", id: "UAE ID 784-1987-1234567-1", lastVisited: "2025-08-06", status: "Active", type: "VIP", image: "https://randomuser.me/api/portraits/men/32.jpg" },
+            { name: "Sara Khan", email: "sara.khan@example.com", phone: "+971 52 987 6543", address: "Al Nahda, Sharjah, UAE", id: "Passport PK1234567", lastVisited: "2025-07-28", status: "Active", type: "Normal", image: "https://randomuser.me/api/portraits/women/44.jpg" },
+            { name: "James Parker", email: "j.parker@example.com", phone: "+971 58 222 8899", address: "JLT, Dubai, UAE", id: "Passport UK9988776", lastVisited: "2025-08-01", status: "Inactive", type: "VIP", image: "https://randomuser.me/api/portraits/men/12.jpg" },
+            { name: "Aisha Al Suwaidi", email: "aisha.suwaidi@example.com", phone: "+971 55 443 1100", address: "Khalifa City, Abu Dhabi, UAE", id: "UAE ID 784-1992-7654321-3", lastVisited: "2025-07-12", status: "Active", type: "Normal", image: "https://randomuser.me/api/portraits/women/65.jpg" }
+        ];
+
+        // ---- DOM Helpers -------------------------------------------------------
+        const $ = (sel, root = document) => root.querySelector(sel);
+        const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+        const tbody = $('#customersBody');
+
+        function pill(html, cls) { return `<span class="pill ${cls}">${html}</span>`; }
+        function statusPill(status) { return status === 'Active' ? pill('Active', 'green') : pill('Inactive', 'gray'); }
+        function typePill(type) { return type === 'VIP' ? pill('VIP', 'vip') : pill('Normal', 'gray'); }
+
+        function formatDateISOToMed(iso) {
+            const d = new Date(iso);
+            if (Number.isNaN(d.valueOf())) return iso;
+            return d.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' });
+        }
+
+        function renderRows() {
+            tbody.innerHTML = customers.map((c, idx) => `
+        <tr data-index="${idx}">
+          <td class="checkbox-cell"><input type="checkbox" /></td>
+          <td class="profile"><img src="${c.image || 'https://i.pravatar.cc/100?u=' + encodeURIComponent(c.email)}" alt="${c.name}"/> ${c.name}</td>
+          <td>${c.email}</td>
+          <td>${c.phone}</td>
+          <td title="${c.address}">${c.address}</td>
+          <td>${c.id}</td>
+          <td>${formatDateISOToMed(c.lastVisited)}</td>
+          <td>${typePill(c.type)}</td>
+          <td><button class="view-btn" data-view>View</button></td>
+        </tr>
+      `).join('');
+            updateStats();
+        }
+
+        function updateStats() {
+            const total = customers.length;
+            const active = customers.filter(c => c.status === 'Active').length;
+            const vip = customers.filter(c => c.type === 'VIP').length;
+            const now = new Date();
+            const recent = customers.filter(c => {
+                const d = new Date(c.lastVisited);
+                return !Number.isNaN(d) && (now - d) / 86400000 <= 30; // <=30 days
+            }).length;
+            $('#stat-total').textContent = total;
+            $('#stat-active').textContent = `${active} / ${total}`;
+            $('#stat-vip').textContent = total ? `${Math.round((vip / total) * 100)}% VIP` : '—';
+            $('#stat-recent').textContent = recent;
+        }
+
+        // ---- View modal --------------------------------------------------------
+        const viewModal = $('#viewModal');
+        let currentIndex = -1;
+
+        function openView(index) {
+            const c = customers[index]; if (!c) return;
+            currentIndex = index;
+
+            $('#vmPhoto').src = c.image || `https://i.pravatar.cc/120?u=${encodeURIComponent(c.email)}`;
+            $('#vmName').textContent = c.name;
+
+            // contact links
+            $('#vmPhoneLink').textContent = c.phone;
+            $('#vmPhoneLink').href = `tel:${c.phone.replace(/[^\d+]/g, '')}`;
+            $('#vmEmailLink').textContent = c.email;
+            $('#vmEmailLink').href = `mailto:${c.email}`;
+
+            // badges
+            const badge = $('#vmBadge');
+            badge.textContent = c.type;
+            badge.className = 'badge ' + (c.type === 'VIP' ? 'vip' : 'normal');
+
+            const statusBadge = $('#vmStatusBadge');
+            statusBadge.textContent = c.status;
+            statusBadge.className = 'badge ' + (c.status === 'Active' ? 'status-active' : 'status-inactive');
+
+            // details
+            $('#vmAddress').textContent = c.address;
+            $('#vmId').textContent = c.id;
+            $('#vmLast').textContent = formatDateISOToMed(c.lastVisited);
+            $('#vmTypeText').textContent = c.type;
+
+            // show
+            viewModal.classList.remove('hidden');
+        }
+
+        function closeModals() { $$('.modal').forEach(m => m.classList.add('hidden')); }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-close]') || (e.target.classList.contains('modal') && !e.target.closest('.modal-content'))) {
+                closeModals();
+            }
+        });
+
+        tbody.addEventListener('click', (e) => {
+            if (e.target.matches('[data-view]')) {
+                const tr = e.target.closest('tr');
+                openView(parseInt(tr.dataset.index, 10));
+            }
+        });
+
+        $('#toggleVipBtn').addEventListener('click', () => {
+            if (currentIndex < 0) return;
+            customers[currentIndex].type = customers[currentIndex].type === 'VIP' ? 'Normal' : 'VIP';
+            renderRows();
+            openView(currentIndex);
+        });
+
+        // ---- Add modal ---------------------------------------------------------
+        const addModal = $('#addCustomerModal');
+        $('#openAdd').addEventListener('click', () => addModal.classList.remove('hidden'));
+        $('#btnAddInline').addEventListener('click', () => addModal.classList.remove('hidden'));
+
+        $('#addCustomerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const rec = Object.fromEntries(fd.entries());
+            customers.unshift({
+                name: rec.name.trim(), email: rec.email.trim(), phone: rec.phone.trim(), address: rec.address.trim(), id: rec.id.trim(),
+                lastVisited: rec.lastVisited, status: rec.status, type: rec.type, image: (rec.image || '').trim()
+            });
+            renderRows();
+            e.target.reset();
+            addModal.classList.add('hidden');
+        });
+
+        // ---- Compact rows toggle ----------------------------------------------
+        let compact = false;
+        $('#btnSwap').addEventListener('click', () => {
+            compact = !compact;
+            document.documentElement.style.setProperty('--pill-pad', compact ? '.35rem .9rem' : '.75rem 2rem');
+            $$('#customersTable td').forEach(td => td.style.padding = compact ? '.6rem .5rem' : '1rem .75rem');
+        });
+
+        // ---- Export to CSV -----------------------------------------------------
+        function tableToCSV() {
+            const rows = [['Name', 'Email', 'Phone', 'Address', 'UAE ID / Passport', 'Last Visited', 'Status', 'Type']];
+            customers.forEach(c => rows.push([c.name, c.email, c.phone, c.address, c.id, formatDateISOToMed(c.lastVisited), c.status, c.type]));
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+            return csv;
+        }
+        function download(filename, text) {
+            const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+        $('#exportBtn').addEventListener('click', () => {
+            const csv = tableToCSV(); const stamp = new Date().toISOString().slice(0, 10);
+            download(`customers_${stamp}.csv`, csv);
+        });
+
+        // ---- Init --------------------------------------------------------------
+        renderRows();
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModals(); });
+
+        // --- Row selection
+        function toggleRowSelection(tr, force) {
+            const cb = tr.querySelector('input[type="checkbox"]');
+            const next = force !== undefined ? force : !cb.checked;
+            cb.checked = next; tr.classList.toggle('selected', next); tr.setAttribute('aria-selected', String(next));
+        }
+        tbody.addEventListener('click', (e) => {
+            const tr = e.target.closest('tr'); if (!tr) return;
+            if (e.target.closest('button,[data-view]')) return; // ignore the View button
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'A') return;
+            toggleRowSelection(tr);
+        });
+        tbody.addEventListener('change', (e) => { if (e.target.type === 'checkbox') toggleRowSelection(e.target.closest('tr'), e.target.checked); });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Companies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="style.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-grad-a: #e9e9ee;
+            --selected: #fde68a;
+            --bg-grad-b: #fff6cf;
+            --ink: #1f2937;
+            --ink-2: #374151;
+            --muted: #6b7280;
+            --chip-green-bg: #ecfdf5;
+            --chip-green-fg: #047857;
+            --chip-gray-bg: #f3f4f6;
+            --chip-gray-fg: #6b7280;
+            --chip-gold-bg: #fef9c3;
+            --chip-gold-fg: #a16207;
+            --chip-blue-bg: #eff6ff;
+            --chip-blue-fg: #1d4ed8;
+            --shadow-2: 0 2px 8px rgba(0, 0, 0, .08);
+            --radius-xl: 1.5rem;
+            --lux-gold: #D4AF37;
+            --lux-gold-2: #b78f2a;
+            --lux-black: #000000;
+            --lux-muted: rgba(0, 0, 0, 0.65);
+            --lux-radius: 14px;
+            --lux-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            background: linear-gradient(90deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 100%);
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0 0rem;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        .add-entity-btn {
+            font-family: 'Poppins';
+            background: #fcd34d !important;
+            color: var(--ink);
+            font-weight: 400;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+            white-space: nowrap;
+        }
+
+        .table-container {
+            background: #fff;
+            border-radius: var(--radius-xl);
+            width: 98%;
+            margin: 20px auto 10px;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 20px 20px 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead {
+            background: #f9fafb;
+            position: sticky;
+            top: 0;
+            z-index: 0;
+        }
+
+        th {
+            text-align: left;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: .75rem;
+        }
+
+        td {
+            padding: 1rem .75rem;
+            font-size: .9rem;
+            color: var(--ink-2);
+            vertical-align: middle;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked {
+            background-color: #111;
+            border-color: #111;
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 4px;
+            height: 9px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        tbody tr.selected td {
+            background-color: var(--selected);
+        }
+
+        tbody tr.selected td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr.selected td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .company-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--lux-gold) 0%, var(--lux-gold-2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+            flex-shrink: 0;
+        }
+
+        .pill {
+            padding: .35rem .75rem;
+            border-radius: 9999px;
+            font-size: .75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .pill.gold {
+            background: var(--chip-gold-bg);
+            color: var(--chip-gold-fg);
+        }
+
+        .pill.blue {
+            background: var(--chip-blue-bg);
+            color: var(--chip-blue-fg);
+        }
+
+        .pill.gray {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .view-btn {
+            background: var(--ink);
+            color: #fff;
+            padding: .4rem 1rem;
+            font-size: 12px;
+            font-weight: 100;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+        }
+
+        .modal {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, .4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            background: #fff;
+            position: relative;
+            animation: zoomBounce .4s ease;
+        }
+
+        @keyframes zoomBounce {
+            0% {
+                transform: scale(.8);
+                opacity: 0
+            }
+
+            60% {
+                transform: scale(1.05);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 1.6rem;
+            color: #6b7280;
+            cursor: pointer;
+            line-height: 1;
+            z-index: 10;
+        }
+
+        .table-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-input {
+            padding: .7rem 1rem .7rem 2.4rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            background: #fff;
+            box-shadow: var(--shadow-2);
+            font-size: .9rem;
+            font-family: 'Poppins', sans-serif;
+            width: min(340px, 58vw);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--muted);
+        }
+
+        .filter-pill {
+            background: #fff;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.7rem 1.4rem;
+            font-size: 0.9rem;
+            font-family: 'Poppins';
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+        }
+
+        #addCompanyModal .modal-content {
+            width: 1100px;
+            max-width: 95vw;
+            border-radius: var(--lux-radius);
+            box-shadow: var(--lux-shadow);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #addCompanyModal .acm-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            flex-shrink: 0;
+        }
+
+        #addCompanyModal .acm-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 100;
+            color: var(--lux-black);
+        }
+
+        #addCompanyModal .acm-body {
+            display: grid;
+            grid-template-columns: 55fr 45fr;
+            gap: 22px;
+            overflow-y: auto;
+            padding: 22px;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 960px) {
+            #addCompanyModal .acm-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        #addCompanyModal .add-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        #addCompanyModal label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: var(--lux-muted);
+            font-weight: 100;
+        }
+
+        #addCompanyModal .input,
+        #addCompanyModal .select,
+        #addCompanyModal .textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #addCompanyModal .textarea {
+            min-height: 84px;
+            resize: vertical;
+        }
+
+        #addCompanyModal .input:focus,
+        #addCompanyModal .select:focus,
+        #addCompanyModal .textarea:focus {
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.32);
+        }
+
+        #addCompanyModal .full {
+            grid-column: 1 / -1;
+        }
+
+        #addCompanyModal .actions {
+            padding: 16px 22px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            align-items: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            flex-shrink: 0;
+        }
+
+        #addCompanyModal .btn-cancel {
+            font-family: "Poppins";
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--lux-muted);
+            cursor: pointer;
+        }
+
+        #addCompanyModal .btn-save {
+            font-family: "Poppins";
+            background: linear-gradient(90deg, var(--lux-gold), var(--lux-gold-2));
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.14);
+        }
+
+        .card-preview-wrapper {
+            background: #f7f7f7;
+            border-radius: var(--lux-radius);
+            padding: 2rem;
+            display: grid;
+            place-items: center;
+        }
+
+        .business-card {
+            width: 350px;
+            height: 200px;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+            position: relative;
+            overflow: hidden;
+            transition: background .3s ease, color .3s ease, border .3s ease;
+        }
+
+        .business-card.tier-premium {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .business-card.tier-premium .card-logo {
+            background: linear-gradient(135deg, var(--lux-gold) 0%, var(--lux-gold-2) 100%);
+            color: white;
+        }
+
+        .business-card.tier-premium::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--lux-gold) 0%, var(--lux-gold-2) 100%);
+            border-radius: 50%;
+            opacity: 0.15;
+        }
+
+        .business-card.tier-standard {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+        }
+
+        .business-card.tier-standard::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.25) 100%);
+            border-radius: 50%;
+        }
+
+        .business-card.tier-standard .card-logo {
+            background: #ffffff;
+            color: #1d4ed8;
+        }
+
+        .business-card.tier-basic {
+            background: linear-gradient(135deg, #ffffff, #f3f4f6);
+            color: var(--ink);
+            border: 1px solid #d1d5db;
+        }
+
+        .business-card.tier-basic::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at top left, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 60%);
+        }
+
+        .business-card.tier-basic .card-logo {
+            background: var(--ink-2);
+            color: #ffffff;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .card-logo {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: background .3s ease, color .3s ease;
+        }
+
+        .card-company-name {
+            font-size: 1.2rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .card-contact-person {
+            font-size: 0.9rem;
+            font-weight: 300;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        .card-footer {
+            font-size: 0.75rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .card-footer .value {
+            display: block;
+        }
+
+        .card-footer .value:not(:last-child) {
+            margin-bottom: 4px;
+        }
+
+        .subtitle-text {
+            font-weight: 100;
+            font-size: .9rem;
+            color: black;
+            margin: .25rem 0 0;
+        }
+
+        #viewModal .modal-content {
+            width: 1100px;
+            max-width: 95vw;
+            border-radius: var(--lux-radius);
+            box-shadow: var(--lux-shadow);
+            overflow: hidden;
+            padding: 22px;
+            display: grid;
+            grid-template-columns: 55fr 45fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 960px) {
+            #viewModal .modal-content {
+                grid-template-columns: 1fr;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        }
+
+        #viewModal .details-wrapper {
+            overflow-y: auto;
+        }
+
+        .vc-header {
+            display: grid;
+            justify-items: center;
+            text-align: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .vc-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--lux-gold) 0%, var(--lux-gold-2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 22px rgba(212, 175, 55, 0.4);
+        }
+
+        .vc-name {
+            margin: 8px 0 2px;
+            font-size: 1.8rem;
+            font-weight: 100;
+            color: var(--ink);
+        }
+
+        .vc-parent {
+            color: var(--muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+        }
+
+        .vc-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: .4rem .7rem;
+            border-radius: 9999px;
+            font-size: .85rem;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: #374151;
+            box-shadow: var(--shadow-2);
+        }
+
+        .badge.tier-premium {
+            background: var(--chip-gold-bg);
+            color: var(--chip-gold-fg);
+        }
+
+        .badge.tier-standard {
+            background: var(--chip-blue-bg);
+            color: var(--chip-blue-fg);
+        }
+
+        .badge.tier-basic {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .badge.status-active {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .badge.status-inactive {
+            background: var(--chip-gray-bg);
+            color: var(--chip-gray-fg);
+        }
+
+        .vc-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .vc-links a {
+            text-decoration: none;
+            padding: .5rem .9rem;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: var(--ink-2);
+            font-weight: 100;
+            box-shadow: var(--shadow-2);
+        }
+
+        .vc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .75rem 1rem;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .vc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .vc-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: .8rem 1rem;
+            background: #fff;
+        }
+
+        .vc-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .vc-item .label {
+            font-size: .75rem;
+            color: var(--muted);
+            font-weight: 100;
+            margin: 0 0 .2rem;
+        }
+
+        .vc-item .value {
+            font-size: .95rem;
+            color: var(--ink-2);
+            margin: 0;
+            font-weight: 100;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: .6rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .btn-dark,
+        .btn-gold {
+            font-family: 'Poppins';
+            border: none;
+            border-radius: 9999px;
+            padding: .55rem 1.2rem;
+            font-weight: 100;
+            cursor: pointer;
+        }
+
+        .btn-dark {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .btn-gold {
+            background: #fcd34d;
+            color: var(--ink);
+        }
+
+        /* AI Assistant Styles */
+        .ai-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--lux-gold) 0%, var(--lux-gold-2) 100%);
+            color: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .ai-fab svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .ai-modal .modal-content {
+            width: 420px;
+            max-width: 95vw;
+            height: 70vh;
+            max-height: 600px;
+            border-radius: var(--lux-radius);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ai-modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            flex-shrink: 0;
+        }
+
+        .ai-modal-header h3 {
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .ai-chat-box {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+        }
+
+        .chat-message {
+            padding: .6rem 1rem;
+            border-radius: 1rem;
+            max-width: 80%;
+            font-size: .9rem;
+            line-height: 1.4;
+        }
+
+        .chat-message.user {
+            background: var(--chip-blue-bg);
+            color: var(--chip-blue-fg);
+            border-bottom-right-radius: .25rem;
+            align-self: flex-end;
+        }
+
+        .chat-message.ai {
+            background: #f3f4f6;
+            color: #374151;
+            border-bottom-left-radius: .25rem;
+            align-self: flex-start;
+        }
+
+        .chat-message.typing {
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .ai-chat-form {
+            display: flex;
+            padding: .75rem;
+            gap: .5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .ai-chat-form input {
+            flex-grow: 1;
+            border: 1px solid #d1d5db;
+            border-radius: 999px;
+            padding: .6rem 1rem;
+            font-family: 'Poppins';
+        }
+
+        .ai-chat-form button {
+            border: none;
+            background: var(--ink);
+            color: white;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
+        .ai-chat-form button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .tab-option {
+            font-family: 'Poppins';
+            background: #fcd34d;
+            color: var(--ink);
+            font-weight: 400;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+            transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+            white-space: nowrap;
+        }
+
+
+
+
+
+
+        .wrapper {}
+
+
+
+        .wrapper .tabs {
+            display: grid;
+            padding-left: 20px;
+        }
+
+        .wrapper [role="tablist"] {
+            display: flex;
+            gap: 10px;
+        }
+
+        .wrapper [role="tabpanel"] {
+
+            padding: 0rem 0rem 2rem;
+        }
+
+
+        .wrapper button[aria-selected=true] {
+            background: #fcd34d;
+            box-shadow: none;
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .wrapper button {
+            background: #fff;
+            border: 0;
+            color: black;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 15px;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .wrapper button[aria-selected="true"] {
+            background: #fcd34d;
+            box-shadow: none;
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        button:focus {
+            outline: 0;
+            --bs-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #companiesTable iframe::-webkit-scrollbar {
+            display: none;
+        }
+
+        #companiesTable iframe html::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="AI-assistant.html" class="floating-ai-btn" id="aiToggle">
+        <svg class="svg-inline--fa fa-robot fa-w-20" aria-hidden="true" data-prefix="fas" data-icon="robot" role="img"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" data-fa-i2svg="">
+            <path fill="currentColor"
+                d="M0 256v128c0 17.7 14.3 32 32 32h32V224H32c-17.7 0-32 14.3-32 32zM464 96H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H176c-44.2 0-80 35.8-80 80v272c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V176c0-44.2-35.8-80-80-80zM256 416h-64v-32h64v32zm-32-120c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zm128 120h-64v-32h64v32zm96 0h-64v-32h64v32zm-32-120c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zm192-72h-32v192h32c17.7 0 32-14.3 32-32V256c0-17.7-14.3-32-32-32z">
+            </path>
+        </svg>
+    </a>
+    <div class="dashboard-container">
+
+        <header class="header">
+            <div class="logo-container">
+                <img src="pixellent.png" class="logo-image">
+                <div class="logo-text"></div>
+            </div>
+
+
+            <nav class="main-nav">
+                <a href="admin_dashboard.html">Dashboard</a>
+                <a href="people.html">People</a>
+                <a href="agent-company.html" class="active">Companies</a>
+                <!-- <a href="agent-company.html">Agent</a>
+                <a href="contractor-company.html">Contractor</a> -->
+                <a href="customers.html">Customers</a>
+                <a href="pantry.html">Pantry</a>
+                <a href="salary_admin.html">Salary</a>
+                <a href="admin-attendance.html">Attendance</a>
+                <!-- <a href="leave.html">Leave</a> -->
+                <a href="parking.html">Parking</a>
+                <a href="delivery.html">Delivery</a>
+
+                <a href="meeting-room.html">Facilities</a>
+                <a href="visitior-list.html">Visitor</a>
+                <a href="anoucement.html">Insights</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="AI-assistant.html" class="setting-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20"
+                        height="20">
+                        <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM12 20a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"></path>
+                    </svg>
+                    <span>AI</span>
+                </a>
+                <!-- <button class="icon-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22ZM19 17v-6a7 7 0 0 0-7-7 7 7 0 0 0-7 7v6l-2 2v1h18v-1l-2-2Z">
+                        </path>
+                    </svg>
+                </button> -->
+                <div class="user-profile-btn"></div>
+            </div>
+        </header>
+
+
+
+
+        <div class="wrapper">
+            <div class="tabs">
+                <div role="tablist" aria-label="Programming Languages">
+                    <button role="tab" aria-selected="true" id="js">
+                        Agent Companies
+
+                    </button>
+
+                    <button role="tab" aria-selected="false" id="php">
+                        Contractor Company
+                    </button>
+                </div>
+                <div role="tabpanel" aria-labelledby="js">
+
+                    <div class="dashboard-header">
+                        <h1>Agent Companies</h1>
+                    </div>
+
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin: 0 1rem 1.25rem;">
+                        <div>
+                            <p class="subtitle-text">Manage your agent company network — track partnerships, contacts,
+                                and business
+                                relationships.</p>
+                        </div>
+                        <button class="add-entity-btn" id="openAdd">Add Company</button>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-controls">
+                            <div class="search-wrap">
+                                <input id="searchInput" class="search-input" type="text"
+                                    placeholder="Search companies" />
+                                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M10 4a6 6 0 104.472 10.03l4.249 4.249 1.414-1.414-4.249-4.249A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" />
+                                </svg>
+                            </div>
+                            <button class="filter-pill">Company tier</button>
+                            <button class="filter-pill">Export</button>
+                        </div>
+
+                        <table id="companiesTable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Company</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Location</th>
+                                    <th>License No.</th>
+                                    <th>Last Activity</th>
+                                    <th>Tier</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="companiesBody"></tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div role="tabpanel" aria-labelledby="php" hidden>
+
+
+                    <iframe src="contractor-company.html" width="100%" height="600" style="border: none;"></iframe>
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+        <div id="viewModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="close-btn" data-close>&times;</button>
+                <div class="details-wrapper">
+                    <div class="vc-header">
+                        <div id="vmLogo" class="vc-avatar">—</div>
+                        <h2 id="vmName" class="vc-name">—</h2>
+                        <p id="vmParent" class="vc-parent">—</p>
+                        <div class="vc-badges">
+                            <span id="vmTierBadge" class="badge"></span>
+                            <span id="vmStatusBadge" class="badge"></span>
+                        </div>
+                        <div class="vc-links">
+                            <a id="vmPhoneLink" href="#">—</a>
+                            <a id="vmEmailLink" href="#">—</a>
+                            <a id="vmWebsiteLink" href="#" target="_blank" rel="noopener">Visit Website</a>
+                        </div>
+                    </div>
+                    <div class="vc-grid">
+                        <div class="vc-item">
+                            <p class="label">Location</p>
+                            <p class="value" id="vmLocation">—</p>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">License Number</p>
+                            <p class="value" id="vmLicense">—</p>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Last Activity</p>
+                            <p class="value" id="vmLastActivity">—</p>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Company Tier</p>
+                            <p class="value" id="vmTierText">—</p>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Contact Person</p>
+                            <p class="value" id="vmContact">—</p>
+                        </div>
+                        <div class="vc-item">
+                            <p class="label">Website</p>
+                            <p class="value"><a id="vmWebsite" href="#" target="_blank" rel="noopener">—</a></p>
+                        </div>
+                        <div class="vc-item full">
+                            <p class="label">Notes</p>
+                            <p class="value" id="vmNotes">—</p>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-dark">Message</button>
+                        <button class="btn-dark" id="downgradeTierBtn">Downgrade</button>
+                        <button class="btn-gold" id="upgradeTierBtn">Upgrade</button>
+                    </div>
+                </div>
+                <div class="card-preview-wrapper">
+                    <div id="viewCard" class="business-card">
+                        <div class="card-header">
+                            <div id="view_card_logo" class="card-logo">--</div>
+                            <div>
+                                <div id="view_card_companyName" class="card-company-name"></div>
+                                <div id="view_card_contactPerson" class="card-contact-person"></div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div id="view_card_phone" class="value"></div>
+                            <div id="view_card_email" class="value"></div>
+                            <div id="view_card_license" class="value"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="addCompanyModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="acmTitle">
+            <div class="modal-content" role="document">
+                <button class="close-btn" data-close aria-label="Close">&times;</button>
+                <header class="acm-header">
+                    <h2 id="acmTitle" class="acm-title">Add Agent Company</h2>
+                </header>
+                <div class="acm-body">
+                    <form id="addCompanyForm" class="add-form-wrapper">
+                        <div class="add-form-grid">
+                            <div><label for="acm_name">Company name</label><input id="acm_name" name="name" type="text"
+                                    class="input" required /></div>
+                            <div><label for="acm_contact">Contact Person</label><input id="acm_contact" name="contact"
+                                    type="text" class="input" /></div>
+                            <div><label for="acm_email">Email</label><input id="acm_email" name="email" type="email"
+                                    class="input" required /></div>
+                            <div><label for="acm_phone">Phone Number</label><input id="acm_phone" name="phone"
+                                    type="text" class="input" required /></div>
+                            <div><label for="acm_license">License Number</label><input id="acm_license" name="license"
+                                    type="text" class="input" required /></div>
+                            <div><label for="acm_website">Website</label><input id="acm_website" name="website"
+                                    type="url" class="input" /></div>
+                            <div><label for="acm_location">Location</label><input id="acm_location" name="location"
+                                    type="text" class="input" required /></div>
+                            <div><label for="acm_lastActivity">Last Activity</label><input id="acm_lastActivity"
+                                    name="lastActivity" type="date" class="input" required /></div>
+                            <div><label for="acm_status">Status</label><select id="acm_status" name="status"
+                                    class="select" required>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select></div>
+                            <div><label for="acm_tier">Tier</label><select id="acm_tier" name="tier" class="select"
+                                    required>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Standard">Standard</option>
+                                    <option value="Basic">Basic</option>
+                                </select></div>
+                            <div class="full"><label for="acm_parent">Parent Company (optional)</label><input
+                                    id="acm_parent" name="parent" type="text" class="input" /></div>
+                            <div class="full"><label for="acm_notes">Notes (optional)</label><textarea id="acm_notes"
+                                    name="notes" class="textarea"></textarea></div>
+                        </div>
+                    </form>
+                    <div class="card-preview-wrapper">
+                        <div id="addCard" class="business-card">
+                            <div class="card-header">
+                                <div id="card_logo" class="card-logo">--</div>
+                                <div>
+                                    <div id="card_companyName" class="card-company-name">Company Name</div>
+                                    <div id="card_contactPerson" class="card-contact-person">Contact Person</div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div id="card_phone" class="value">Phone Number</div>
+                                <div id="card_email" class="value">Email Address</div>
+                                <div id="card_license" class="value">License Number</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="actions">
+                    <button type="button" class="btn-cancel" data-close>Cancel</button>
+                    <button type="submit" form="addCompanyForm" class="btn-save">Add Company</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+   
+    <div id="ai-modal" class="modal hidden ai-modal">
+        <div class="modal-content">
+            <button class="close-btn" data-close-ai>&times;</button>
+            <header class="ai-modal-header">
+                <h3>AI Assistant</h3>
+            </header>
+            <div class="ai-chat-box" id="ai-chat-box">
+                <div class="chat-message ai">
+                    Hello! How can I assist you today?
+                </div>
+            </div>
+            <form class="ai-chat-form" id="ai-chat-form">
+                <input type="text" id="ai-chat-input" placeholder="Ask something..." autocomplete="off">
+                <button type="submit" aria-label="Send Message">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        const companies = [
+            { name: "Emirates Real Estate", email: "contact@emiratesre.com", phone: "+971 4 123 4567", location: "Dubai Marina, Dubai", license: "RERA-12345", lastActivity: "2025-08-10", status: "Active", tier: "Premium", contact: "Ahmed Al-Rashid", website: "https://emiratesre.com", parent: "Binghatti", notes: "Leading luxury property specialist." },
+            { name: "Gulf Properties LLC", email: "info@gulfproperties.ae", phone: "+971 2 987 6543", location: "Abu Dhabi, UAE", license: "RERA-67890", lastActivity: "2025-08-08", status: "Active", tier: "Standard", contact: "Sarah Johnson", website: "https://gulfproperties.ae", parent: "", notes: "Specializes in commercial and residential properties." },
+            { name: "Skyline Realty", email: "hello@skylinerealty.com", phone: "+971 4 555 1234", location: "JLT, Dubai", license: "RERA-11111", lastActivity: "2025-07-25", status: "Inactive", tier: "Basic", contact: "Michael Brown", website: "https://skylinerealty.com", parent: "", notes: "Currently restructuring operations." },
+            { name: "Desert Crown Properties", email: "contact@desertcrown.ae", phone: "+971 6 444 7890", location: "Sharjah, UAE", license: "RERA-22222", lastActivity: "2025-08-05", status: "Active", tier: "Premium", contact: "Fatima Al-Zahra", website: "https://desertcrown.ae", parent: "Crown Investment Group", notes: "Focused on emerging markets." },
+        ];
+
+        const $ = (sel, root = document) => root.querySelector(sel);
+        const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+        const tbody = $('#companiesBody');
+
+        function tierPill(tier) {
+            const map = { Premium: 'gold', Standard: 'blue', Basic: 'gray' };
+            return `<span class="pill ${map[tier] || 'gray'}">${tier}</span>`;
+        }
+
+        function formatDateISOToMed(iso) {
+            if (!iso) return '—';
+            const d = new Date(iso);
+            return d.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' });
+        }
+
+        function getCompanyInitials(name) {
+            if (!name) return '??';
+            return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        function renderRows() {
+            tbody.innerHTML = companies.map((c, idx) => `
+                <tr data-index="${idx}">
+                  <td class="checkbox-cell"><input type="checkbox" /></td>
+                  <td class="profile"><div class="company-logo">${getCompanyInitials(c.name)}</div><span>${c.name}</span></td>
+                  <td>${c.email}</td><td>${c.phone}</td><td>${c.location}</td><td>${c.license}</td>
+                  <td>${formatDateISOToMed(c.lastActivity)}</td><td>${tierPill(c.tier)}</td>
+                  <td><button class="view-btn" data-view>View</button></td>
+                </tr>
+            `).join('');
+        }
+
+        const viewModal = $('#viewModal');
+        let currentIndex = -1;
+
+        function openView(index) {
+            const c = companies[index]; if (!c) return;
+            currentIndex = index;
+
+            // Populate Details Pane
+            $('#vmLogo').textContent = getCompanyInitials(c.name);
+            $('#vmName').textContent = c.name;
+            $('#vmParent').textContent = c.parent || 'Independent Company';
+            $('#vmParent').style.display = c.parent ? 'block' : 'none';
+            $('#vmPhoneLink').textContent = c.phone;
+            $('#vmPhoneLink').href = `tel:${c.phone.replace(/[^\d+]/g, '')}`;
+            $('#vmEmailLink').textContent = c.email;
+            $('#vmEmailLink').href = `mailto:${c.email}`;
+            $('#vmWebsiteLink').href = c.website || '#';
+            $('#vmWebsiteLink').style.display = c.website ? 'inline-flex' : 'none';
+            $('#vmTierBadge').className = `badge tier-${c.tier.toLowerCase()}`;
+            $('#vmTierBadge').textContent = c.tier;
+            $('#vmStatusBadge').className = `badge status-${c.status.toLowerCase()}`;
+            $('#vmStatusBadge').textContent = c.status;
+            $('#vmLocation').textContent = c.location || '—';
+            $('#vmLicense').textContent = c.license || '—';
+            $('#vmLastActivity').textContent = formatDateISOToMed(c.lastActivity);
+            $('#vmTierText').textContent = c.tier || '—';
+            $('#vmContact').textContent = c.contact || '—';
+            $('#vmWebsite').textContent = c.website || '—';
+            $('#vmWebsite').href = c.website || '#';
+            $('#vmNotes').textContent = c.notes || '—';
+
+            // Populate Business Card
+            const viewCard = $('#viewCard');
+            viewCard.className = `business-card tier-${c.tier.toLowerCase()}`;
+            $('#view_card_logo').textContent = getCompanyInitials(c.name);
+            $('#view_card_companyName').textContent = c.name;
+            $('#view_card_contactPerson').textContent = c.contact;
+            $('#view_card_phone').textContent = c.phone;
+            $('#view_card_email').textContent = c.email;
+            $('#view_card_license').textContent = `License: ${c.license}`;
+
+            viewModal.classList.remove('hidden');
+        }
+
+        function closeModals() {
+            $$('.modal').forEach(m => m.classList.add('hidden'));
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-close]') || e.target.matches('[data-close-ai]')) closeModals();
+            if (e.target.classList.contains('ai-modal')) closeModals();
+        });
+
+        tbody.addEventListener('click', (e) => {
+            if (e.target.matches('[data-view]')) openView(parseInt(e.target.closest('tr').dataset.index, 10));
+        });
+
+        $('#upgradeTierBtn').addEventListener('click', () => {
+            if (currentIndex < 0) return;
+            const c = companies[currentIndex];
+            if (c.tier === 'Basic') {
+                c.tier = 'Standard';
+            } else if (c.tier === 'Standard') {
+                c.tier = 'Premium';
+            }
+            renderRows();
+            openView(currentIndex);
+        });
+
+        $('#downgradeTierBtn').addEventListener('click', () => {
+            if (currentIndex < 0) return;
+            const c = companies[currentIndex];
+            if (c.tier === 'Premium') {
+                c.tier = 'Standard';
+            } else if (c.tier === 'Standard') {
+                c.tier = 'Basic';
+            }
+            renderRows();
+            openView(currentIndex);
+        });
+
+
+        const addModal = $('#addCompanyModal');
+        const addForm = $('#addCompanyForm');
+
+        function updateCardPreview() {
+            const name = $('#acm_name').value;
+            const tier = $('#acm_tier').value;
+
+            $('#card_logo').textContent = getCompanyInitials(name) || '--';
+            $('#card_companyName').textContent = name || 'Company Name';
+            $('#card_contactPerson').textContent = $('#acm_contact').value || 'Contact Person';
+            $('#card_phone').textContent = $('#acm_phone').value || 'Phone Number';
+            $('#card_email').textContent = $('#acm_email').value || 'Email Address';
+            $('#card_license').textContent = `License: ${$('#acm_license').value || '...'}`;
+
+            const addCard = $('#addCard');
+            addCard.className = `business-card tier-${tier.toLowerCase()}`;
+        }
+
+        $('#openAdd').addEventListener('click', () => {
+            addForm.reset();
+            updateCardPreview();
+            addModal.classList.remove('hidden');
+        });
+
+        addForm.addEventListener('input', updateCardPreview);
+
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            companies.unshift(Object.fromEntries(new FormData(e.target).entries()));
+            renderRows();
+            closeModals();
+        });
+
+        function toggleRowSelection(tr, force) {
+            const isSelected = force !== undefined ? force : !tr.classList.contains('selected');
+            tr.classList.toggle('selected', isSelected);
+            const checkbox = tr.querySelector('.checkbox-cell input');
+            if (checkbox) checkbox.checked = isSelected;
+        }
+
+        tbody.addEventListener('click', (e) => {
+            const tr = e.target.closest('tr');
+            if (tr && !e.target.closest('button, a, input')) toggleRowSelection(tr);
+        });
+
+        tbody.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox') toggleRowSelection(e.target.closest('tr'), e.target.checked);
+        });
+
+        renderRows();
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModals(); });
+
+        /* AI Assistant Logic */
+        const aiModal = $('#ai-modal');
+        const aiFabBtn = $('#ai-fab-btn');
+        const aiChatBox = $('#ai-chat-box');
+        const aiChatForm = $('#ai-chat-form');
+        const aiChatInput = $('#ai-chat-input');
+        const aiCloseBtn = $('[data-close-ai]');
+
+        aiFabBtn.addEventListener('click', () => {
+            aiModal.classList.remove('hidden');
+        });
+
+        aiCloseBtn.addEventListener('click', () => {
+            aiModal.classList.add('hidden');
+        });
+
+        const addMessage = (sender, text) => {
+            const messageEl = document.createElement('div');
+            messageEl.className = `chat-message ${sender}`;
+            messageEl.textContent = text;
+            aiChatBox.appendChild(messageEl);
+            aiChatBox.scrollTop = aiChatBox.scrollHeight;
+            return messageEl;
+        };
+
+        aiChatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const queryText = aiChatInput.value.trim();
+            if (!queryText) return;
+
+            addMessage('user', queryText);
+            aiChatInput.value = '';
+
+            const typingIndicator = addMessage('ai typing', '...');
+
+            try {
+                const response = await fetch('https://binghatti-test-2.vercel.app/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ queryText })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Assuming the response has a fulfillmentText field
+                const aiResponse = data.fulfillmentText || 'Sorry, I could not understand.';
+                typingIndicator.remove();
+                addMessage('ai', aiResponse);
+
+            } catch (error) {
+                console.error('AI Assistant Error:', error);
+                typingIndicator.remove();
+                addMessage('ai', 'Sorry, I am having trouble connecting. Please try again later.');
+            }
+        });
+
+    </script>
+    <script>
+        const tab = document.querySelector('.tabs');
+        const tabButtons = tab.querySelectorAll('[role="tab"]');
+        const tabPanels = Array.from(tab.querySelectorAll('[role="tabpanel"]'));
+
+        function tabClickHandler(e) {
+            //Hide All Tabpane
+            tabPanels.forEach(panel => {
+                panel.hidden = 'true';
+            });
+
+            //Deselect Tab Button
+            tabButtons.forEach(button => {
+                button.setAttribute('aria-selected', 'false');
+            });
+
+            //Mark New Tab
+            e.currentTarget.setAttribute('aria-selected', 'true');
+
+            //Show New Tab
+            const { id } = e.currentTarget;
+
+            const currentTab = tabPanels.find(
+                panel => panel.getAttribute('aria-labelledby') === id
+            );
+
+            currentTab.hidden = false;
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', tabClickHandler);
+        })
+    </script>
+</body>
+
+</html>
